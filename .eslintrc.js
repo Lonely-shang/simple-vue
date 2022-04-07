@@ -1,36 +1,16 @@
+/** @format */
+
+// eslint-disable-next-line no-undef
 module.exports = {
-	'env': {
-		'browser': true,
-		'es2021': true
+	parser: '@typescript-eslint/parser',
+	extends: ['plugin:@typescript-eslint/recommended', 'plugin:prettier/recommended'], //定义文件继承的子规范
+	plugins: ['@typescript-eslint'], //定义了该eslint文件所依赖的插件
+	env: {
+		// browser: true,
+		// node: true,
+		node: true,
+		browser: true,
+		commonjs: true,
+		amd: true
 	},
-	'extends': [
-		'eslint:recommended',
-		'plugin:@typescript-eslint/recommended'
-	],
-	'parser': '@typescript-eslint/parser',
-	'parserOptions': {
-		'ecmaVersion': 'latest',
-		'sourceType': 'module'
-	},
-	'plugins': [
-		'@typescript-eslint'
-	],
-	'rules': {
-		'indent': [
-			'error',
-			'tab'
-		],
-		'linebreak-style': [
-			'error',
-			'windows'
-		],
-		'quotes': [
-			'error',
-			'single'
-		],
-		'semi': [
-			'error',
-			'never'
-		]
-	}
 }
