@@ -8,3 +8,7 @@ type Ifun = fun | reFun
 
 type fun = () => void
 type reFun = () => any
+
+interface IeffectOptions{
+  scheduler?: () => void;
+}
