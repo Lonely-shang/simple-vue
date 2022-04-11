@@ -14,7 +14,7 @@
 - [ ] 支持嵌套 reactive
 - [ ] 支持 toRaw
 - [x] 支持 effect.scheduler
-- [ ] 支持 effect.stop
+- [x] 支持 effect.stop
 - [ ] 支持 isReadonly
 - [ ] 支持 isProxy
 - [ ] 支持 shallowReadonly
