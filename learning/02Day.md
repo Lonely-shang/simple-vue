@@ -56,7 +56,7 @@ describe('effect', () => {
       this._fun = fun;
     }
 
-    run () {      
+    run () {
       this.run();
     }
   }
@@ -71,9 +71,9 @@ describe('effect', () => {
     const depsMap: Map = trackMap.get(target);
     const deps: Set = depsMap.get(key);
     for(let item of deps) {
-      item.run();   
+      item.run();
     }
-  
+
 ```
 ###### after update
 
@@ -91,7 +91,7 @@ describe('effect', () => {
 
     run () {
       effectReactive = this;
-      // 如果effect中传入的函数有返回值那么直接执行后返回     
+      // 如果effect中传入的函数有返回值那么直接执行后返回
       return this.run();
     }
   }

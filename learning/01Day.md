@@ -5,7 +5,7 @@ reactive & effect 的实现
 #### reactive
   使用 reactive 会返回对传入的对象用Proxy包装的对象 代理其set get 方法
 ```javascript
-  
+
   function reactive (raw) {
     return new Proxy(raw, {
       /**
@@ -28,7 +28,7 @@ reactive & effect 的实现
       set (target, key, val) {
         // 这里利用反射对target对象添加属性或修改属性
         const _flag = Reflect.set(target, key, val);
-        
+
         // 这里触发收集的依赖
         trigger(target, key);
 
@@ -52,7 +52,7 @@ reactive & effect 的实现
 
     _effect.runner();
   }
-  
+
   // 用于存放EffectReactive的实例对象
   let effectFun
 
@@ -61,10 +61,10 @@ reactive & effect 的实现
   // 调用runner会执行传过来的fun
   class EffectReactive{
     _fun = null
-    
+
     constructor(fun) {
       this._fun = fun;
-    } 
+    }
 
     runner() {
       effectFun = this;
@@ -79,10 +79,10 @@ reactive & effect 的实现
 
   // 全局变量存放收集的依赖
   const refectMap = new Map();
-  
+
   /**
    * 依赖收集
-   * 
+   *
    * */
   function track(target, key){
     // 获取key为target的map
@@ -95,7 +95,7 @@ reactive & effect 的实现
 
     // 获取depsMap里key为`${key}`的Set集合
     const deps = depsMap.get(key);
-    // 
+    //
     if( !deps ) {
       deps = new Set();
       depsMap.set(key, deps);
@@ -121,7 +121,7 @@ reactive & effect 的实现
     for(let item of deps){
       item.runner();
     }
-  } 
+  }
 
 ```
 
