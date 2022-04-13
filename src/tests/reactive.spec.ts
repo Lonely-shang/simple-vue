@@ -1,4 +1,4 @@
-import { reactive } from "../reactivity/reactive"
+import { isReactive, reactive } from "../reactivity/reactive"
 
 
 describe('reactive', () => {
@@ -13,6 +13,18 @@ describe('reactive', () => {
 
     expect(reactiveMy.name).toBe('Miliky')
 
+
+  })
+
+  it('isReactive', () => {
+    
+    const user = { age: 18 }
+
+    const reactiveUser = reactive(user)
+
+    expect(isReactive(user)).toBe(false)
+
+    expect(isReactive(reactiveUser)).toBe(true)
 
   })
 

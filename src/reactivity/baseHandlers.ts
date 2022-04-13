@@ -12,6 +12,8 @@ function createGetter(isReadonly: boolean = false) {
     // 如果传入的的key是`ReactiveFlags.IS_READONLY`则返回传入的isReadonly
     if (key === ReactiveFlags.IS_READONLY) {
       return isReadonly
+    } else if( key === ReactiveFlags.IS_REACTIVE ) {
+      return !isReadonly
     }
     const res = Reflect.get(target, key)
     // 如果是readonly则不进行依赖收集

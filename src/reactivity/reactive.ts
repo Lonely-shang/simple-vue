@@ -1,6 +1,7 @@
 import { mutableHandlers, readonlyHandlers } from "./baseHandlers";
 
 export const enum ReactiveFlags {
+  IS_REACTIVE = "__v_isReactive",
   IS_READONLY = "__v_isReadonly",
 }
 
@@ -16,6 +17,11 @@ export function reactive (raw: Iraw) {
 // 将传入的对象包装成只读的对象
 export function readonly(raw: Iraw) {
   return createReactiveObject(raw, readonlyHandlers())
+}
+
+
+export function isReactive(raw: Iraw) {
+  return !!raw[ReactiveFlags.IS_REACTIVE]
 }
 
 

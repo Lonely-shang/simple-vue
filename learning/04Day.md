@@ -1,4 +1,4 @@
-## readonly & isReadonly
+## readonly & isReadonly & isReactive
 
 #### readonly
 
@@ -44,7 +44,9 @@
 
 ```
 
-#### isReadonly
+#### isReadonly & isReactive
+
+isReactive 同 isReadonly
 
 ```typescript
   // readonly.spec.ts
@@ -69,7 +71,8 @@
 
   export const enum ReactiveFlags {
 
-    IS_READONLY = '__v_isreadonly'
+    IS_REACTIVE = '__v_isReactive',
+    IS_READONLY = '__v_isReadonly'
 
   }
 
@@ -77,6 +80,10 @@
 
     return createreactiveObject(raw, readonlyHandlers());
 
+  }
+
+  export function isReactive(raw: Object) {
+    return !!raw[ReactiveFlags.IS_REACTIVE];
   }
 
   export function isReadonly(raw) {
@@ -130,6 +137,8 @@
       // }
       if(key === ReactiveFlags.IS_READONLY){
         return isReadonly;
+      } else if(key === ReactiveFlags.IS_REACTIVE){
+        return !isReadonly;
       }
 
       const res = Reflect.get(target, key);
