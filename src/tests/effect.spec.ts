@@ -67,7 +67,7 @@ describe('effect', () => {
 
     stop(runner)
 
-    user.age = 2
+    user.age++
 
     expect(effectAge).toBe(1)
 
