@@ -6,7 +6,7 @@
 #### reactivity
 - [x] reactive 的实现
 - [ ] ref 的实现
-- [ ] readonly 的实现
+- [x] readonly 的实现
 - [ ] computed 的实现
 - [x] track 依赖收集
 - [x] trigger 触发依赖
@@ -15,7 +15,7 @@
 - [ ] 支持 toRaw
 - [x] 支持 effect.scheduler
 - [x] 支持 effect.stop
-- [ ] 支持 isReadonly
+- [x] 支持 isReadonly
 - [ ] 支持 isProxy
 - [ ] 支持 shallowReadonly
 - [ ] 支持 proxyRefs
