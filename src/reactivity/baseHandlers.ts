@@ -1,5 +1,6 @@
+import { isObject } from "../shared"
 import { track, trigger } from "./effect"
-import { ReactiveFlags } from "./reactive"
+import { reactive, ReactiveFlags, readonly } from "./reactive"
 
 
 const get = createGetter()
@@ -16,6 +17,13 @@ function createGetter(isReadonly: boolean = false) {
       return !isReadonly
     }
     const res = Reflect.get(target, key)
+
+    // res如果是对象，则将循环嵌套
+    if(isObject(res)){
+      // 根据isreadonly判断是否是只读
+      return isReadonly ? readonly(res) : reactive(res)
+    }
+
     // 如果是readonly则不进行依赖收集
     if (!isReadonly) {
       track(target, key)

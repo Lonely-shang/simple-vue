@@ -23,6 +23,8 @@ describe('readonly', () => {
 
     expect(isReadonly(original)).toBe(false)
     expect(isReadonly(wrapped)).toBe(true)
+
+    expect(isReadonly(wrapped.bar)).toBe(true)
   })
 
 })

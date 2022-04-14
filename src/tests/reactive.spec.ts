@@ -17,8 +17,10 @@ describe('reactive', () => {
   })
 
   it('isReactive', () => {
-    
-    const user = { age: 18 }
+
+    const user = { age: 18, class: {
+      english: 'English'
+    }}
 
     const reactiveUser = reactive(user)
 
@@ -26,6 +28,7 @@ describe('reactive', () => {
 
     expect(isReactive(reactiveUser)).toBe(true)
 
+    expect(isReactive(reactiveUser.class)).toBe(true)
   })
 
 })
