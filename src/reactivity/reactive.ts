@@ -1,4 +1,4 @@
-import { mutableHandlers, readonlyHandlers } from "./baseHandlers";
+import { mutableHandlers, readonlyHandlers, shallowReadonlyHandlers } from "./baseHandlers";
 
 export const enum ReactiveFlags {
   IS_REACTIVE = "__v_isReactive",
@@ -19,6 +19,10 @@ export function readonly(raw: Iraw) {
   return createReactiveObject(raw, readonlyHandlers())
 }
 
+export function shallowReadonly(raw: Iraw) {
+  return createReactiveObject(raw, shallowReadonlyHandlers())
+}
+
 
 export function isReactive(raw: Iraw) {
   return !!raw[ReactiveFlags.IS_REACTIVE]
@@ -34,6 +38,10 @@ export function isReadonly(raw: Iraw) {
   // 当不是一个proxy包装的对象会返回undefined
   // 这里对返回值求两次反转换成boolean值
   return !!raw[ReactiveFlags.IS_READONLY]
+}
+
+export function isProxy(raw) {
+  return isReactive(raw) || isReadonly(raw)
 }
 
 function createReactiveObject(raw: Iraw, baseHandler) {

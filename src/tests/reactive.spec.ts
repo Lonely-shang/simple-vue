@@ -1,4 +1,4 @@
-import { isReactive, reactive } from "../reactivity/reactive"
+import { isProxy, isReactive, reactive } from "../reactivity/reactive"
 
 
 describe('reactive', () => {
@@ -27,7 +27,7 @@ describe('reactive', () => {
     expect(isReactive(user)).toBe(false)
 
     expect(isReactive(reactiveUser)).toBe(true)
-
+    expect(isProxy(reactiveUser)).toBe(true)
     expect(isReactive(reactiveUser.class)).toBe(true)
   })
 
