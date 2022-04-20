@@ -90,6 +90,10 @@ export function track (target: Iraw, key: string) {
     depsMap.set(key, dep)
   }
 
+  trackEffect(dep)
+}
+
+export function trackEffect(dep) {
   dep.add(effectFun)
   // 反向收集保存一下dep
   effectFun.deps.push(dep)
@@ -97,20 +101,23 @@ export function track (target: Iraw, key: string) {
 
 // 验证是否收集依赖
 // 如果有一个为false则停止收集依赖
-function isTracking() {
+export function isTracking() {
   return shouldTrack && !!effectFun
 }
 
 // 触发依赖
 export function trigger (target: Iraw, key: string, value: any) {
   const depsMap = refectMap?.get(target)
-  const deps = depsMap?.get(key)
-  if(deps)
-    for (const item of deps) {
-      if(item.scheduler){
-        item.scheduler()
-      } else {
-        item.run()
-      }
+  const dep = depsMap?.get(key)
+  if(dep) triggerEffect(dep)
+}
+
+export function triggerEffect(dep){
+  for (const item of dep) {
+    if(item.scheduler){
+      item.scheduler()
+    } else {
+      item.run()
     }
+  }
 }

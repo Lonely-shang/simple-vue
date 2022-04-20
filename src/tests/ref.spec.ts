@@ -1,4 +1,5 @@
 import { effect } from "../reactivity/effect"
+import { ref } from "../reactivity/ref"
 
 describe('ref', () => {
 
@@ -33,14 +34,15 @@ describe('ref', () => {
       count: 1
     })
     let dummy
+    let calls = 0
     effect(() => {
+      calls++
       dummy = a.value.count
     })
 
     expect(dummy).toBe(1)
     a.value.count = 2
     expect(dummy).toBe(2)
-
   })
 
 })
