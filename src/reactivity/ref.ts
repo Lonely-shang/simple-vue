@@ -7,13 +7,13 @@ class RefImpl {
   private dep
   private _rawValue
   constructor(val){
+    this.dep = new Set()
     this._rawValue = val
     this._value = isObject(val) ? reactive(val) : val
   }
 
   get value () {
 
-    this.dep = new Set()
     // 收集依赖
     if (isTracking()) {
       trackEffect(this.dep)
