@@ -32,6 +32,22 @@
       expect(dummy).toBe(2) 
     })
 
+    it('should make nested properties reactive', () => {
+      const a = ref({
+        count: 1
+      })
+      let dummy
+      let calls = 0
+      effect(() => {
+        calls++
+        dummy = a.value.count
+      })
+
+      expect(dummy).toBe(1)
+      a.value.count = 2
+      expect(dummy).toBe(2)
+    })
+
   })
 
 ```
@@ -41,9 +57,10 @@
 
   class RefImpl{
     private _val
-    dep
+    private dep
     constructor(value){
-      this._val = value;
+      this._rawVal = value;
+      this._val = isObject(value) ? reactive(value) : value;
       this.dep = new Set();
     }
 
@@ -60,9 +77,12 @@
 
     // 通过触发value来触发依赖
     set value(newVal){
-
-      
-      this._val = newVal
+      if(hasChange(this._rawVal, newVal)){
+        // 进行触发依赖
+        this._rawVal = newVal
+        triggerEffect(dep)
+        this._val = newVal
+      } 
     }
   }
 
@@ -90,9 +110,36 @@
     }
   }
 
+  // 将添加的方法抽离 方便`ref`api 调用
   export function trackEffect(dep) {
     dep.add(effectActive);
     effectActive.deps.push(dep);
+  }
+
+  export function trigger (target, key){
+    const deps = depsMap.get(target);
+
+    const dep = deps.get(key);
+
+    triggerEffect(dep);
+  }
+  
+  export function triggerEffect(dep){
+    for(let item in dep){
+      if(item.scheduler){
+        item.scheduler();
+      }else {
+        item.run();
+      }
+    }
+  }
+
+```
+```typescript
+  // shared/index.ts
+
+  export function hasChanged(value, oldValue) {
+    return !Object.is(value, oldValue);
   }
 
 ```
