@@ -39,3 +39,7 @@ export function ref(val) {
 export function isRef(val: any) {
   return !!val.isRef;
 }
+
+export function unRef(val: any) {
+  return isRef(val) && val.value
+}
