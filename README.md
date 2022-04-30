@@ -20,7 +20,8 @@
 - [x] 支持 isProxy
 - [x] 支持 shallowReadonly
 - [ ] 支持 proxyRefs
-
+- [x] 支持 isRef
+- [x] 支持 unRef
 #### runtime-core
 
 - [ ] 支持组件类型
