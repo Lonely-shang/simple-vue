@@ -6,6 +6,7 @@ class RefImpl {
   private _value: any
   private dep
   private _rawValue
+  public isRef = true
   constructor(val){
     this.dep = new Set()
     this._rawValue = val
@@ -33,4 +34,8 @@ class RefImpl {
 
 export function ref(val) {
   return new RefImpl(val)
+}
+
+export function isRef(val: any) {
+  return !!val.isRef;
 }

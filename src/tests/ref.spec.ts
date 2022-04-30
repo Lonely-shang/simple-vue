@@ -1,5 +1,5 @@
 import { effect } from "../reactivity/effect"
-import { ref } from "../reactivity/ref"
+import { isRef, ref } from "../reactivity/ref"
 
 describe('ref', () => {
 
@@ -43,6 +43,15 @@ describe('ref', () => {
     expect(dummy).toBe(1)
     a.value.count = 2
     expect(dummy).toBe(2)
+  })
+
+
+  it('isRef ', () => {
+    const num = 1
+    const a = ref(num)
+
+    expect(isRef(num)).toBeFalsy()
+    expect(isRef(a)).toBeTruthy()
   })
 
 })
