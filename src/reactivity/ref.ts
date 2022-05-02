@@ -37,9 +37,13 @@ export function ref(val) {
 }
 
 export function isRef(val: any) {
-  return !!val.isRef;
+  return !!val.isRef
 }
 
 export function unRef(val: any) {
-  return isRef(val) && val.value
+  return isRef(val) ?  val.value : val
+}
+
+export function proxyRef(ref) {
+
 }
