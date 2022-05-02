@@ -6,7 +6,7 @@ class RefImpl {
   private _value: any
   private dep
   private _rawValue
-  public isRef = true
+  public __v_isRef = true
   constructor(val){
     this.dep = new Set()
     this._rawValue = val
@@ -37,7 +37,7 @@ export function ref(val) {
 }
 
 export function isRef(val: any) {
-  return !!val.isRef
+  return !!val.__v_isRef
 }
 
 export function unRef(val: any) {
@@ -45,5 +45,18 @@ export function unRef(val: any) {
 }
 
 export function proxyRef(ref) {
+  return new Proxy(ref, {
+    get (target, key) {
+      return unRef(Reflect.get(target, key))
+    },
 
+    set (target, key, value) {
+
+      if (isRef(target[key]) && !isRef(value)) {
+        return target[key].value = value
+      }
+      return Reflect.set(target, key, value)
+    }
+
+  })
 }

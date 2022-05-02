@@ -58,7 +58,7 @@ describe('ref', () => {
     const num = 18
     const a = ref(num)
 
-    expect(unRef(num)).toBeFalsy()
+    expect(unRef(num)).toBe(18)
     expect(unRef(a)).toBe(18)
   })
 
@@ -69,10 +69,19 @@ describe('ref', () => {
       age: ref(18)
     }
 
-    const proxyUser = proxyRef(user);
+    const proxyUser = proxyRef(user)
 
-    // expect(proxyUser.age).toBe(18)
-    // expect(proxyUser.age.value).toBe(18)
+    expect(proxyUser.age).toBe(18)
+    expect(user.age.value).toBe(18)
+    expect(proxyUser.name).toBe('Miliky')
+
+    proxyUser.age = 20;
+    expect(proxyUser.age).toBe(20);
+    expect(user.age.value).toBe(20);
+
+    proxyUser.age = ref(10);
+    expect(proxyUser.age).toBe(10);
+    expect(user.age.value).toBe(10);
 
   })
 })
