@@ -19,7 +19,7 @@
 - [x] 支持嵌套 readonly
 - [x] 支持 isProxy
 - [x] 支持 shallowReadonly
-- [ ] 支持 proxyRefs
+- [x] 支持 proxyRefs
 - [x] 支持 isRef
 - [x] 支持 unRef
 #### runtime-core
