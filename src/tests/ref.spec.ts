@@ -1,5 +1,5 @@
 import { effect } from "../reactivity/effect"
-import { isRef, proxyRef, ref, unRef } from "../reactivity/ref"
+import { isRef, proxyRefs, ref, unRef } from "../reactivity/ref"
 
 describe('ref', () => {
 
@@ -62,14 +62,14 @@ describe('ref', () => {
     expect(unRef(a)).toBe(18)
   })
 
-  it('proxyRef', () => {
+  it('proxyRefs', () => {
 
     const user = {
       name: 'Miliky',
       age: ref(18)
     }
 
-    const proxyUser = proxyRef(user)
+    const proxyUser = proxyRefs(user)
 
     expect(proxyUser.age).toBe(18)
     expect(user.age.value).toBe(18)

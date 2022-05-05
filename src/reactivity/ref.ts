@@ -44,7 +44,7 @@ export function unRef(val: any) {
   return isRef(val) ?  val.value : val
 }
 
-export function proxyRef(ref) {
+export function proxyRefs(ref) {
   return new Proxy(ref, {
     get (target, key) {
       return unRef(Reflect.get(target, key))

@@ -1,26 +1,31 @@
-## isRef & unRef
+##  proxyRefs
+
+被`proxyRefs`包装的对象其内部的ref对象可以直接通过key获取内部的value的值，帮助结构ref
 
 ```typescript
-  // tests/ref.spec.ts
 
   descript('ref', () => {
+    it('proxyRefs', () => {
+      
+      const user = {
+        name: 'Miliky',
+        age: ref(18)
+      }
 
-    it('isRef', () => {
-      const num = 1;
-      const a = ref(num);
+      const proxyRefUser = proxyRefs(user);
+      
+      expect(proxyRefUser.age).toBe(18)
+      expect(user.age.value).toBe(18)
 
-      expect(isRef(num)).toBeFalsy();
-      expect(isRef(a)).toBeTruthy();
+      proxyRefUser.age = 20;
+      expect(proxyRefUser.age).toBe(20)
+      expect(user.age.value).toBe(20)
+
+      proxyRefUser.age = ref(27);
+      expect(proxyRefUser.age).toBe(27)
+      expect(user.age.value).toBe(27)
+
     })
-
-    it('unRef', () => {
-      const num = 1;
-      const a = ref(num);
-
-      expect(num).toBeFalsy();
-      expect(unRef(a)).toBe(1);
-    })
-
   })
 
 ```
@@ -28,47 +33,31 @@
 ```typescript
   // reactivity/ref.ts
 
-  /**
-   * 将ref设计成.value形式 方便进行通过触发value方法进行
-   * 依赖收集和触发依赖
-   */
-  class RefImpl{
-    private _value: any
-    private dep  // 存放收集的依赖
-    private _rawValue // 存放原始值，方便后期比较是否相同
-    public isRef = true
-    constructor(val){
-      this.dep = new Set()
-      this._rawValue = val
-      // 通过判断传入的是否是对象，相应的时候进行reactive进行包装
-      this._value = isObject(val) ? reactive(val) : val
-    }
-
-    get value () {
-
-      // 收集依赖
-      if (isTracking()) {
-        trackEffect(this.dep)
-      }
-
-      return this._value
-    }
-
-    set value (value: any) {
-      if(hasChanged(this._rawValue, value)){
-        this._rawValue = value
-        this._value = value
-        triggerEffect(this.dep)
-      }
-    }
-  }
-
-  export function isRef(val: any) {
-    return !!val.isRef;
+  export function isRef (ref: Ref) {
+    return !!ref.__v_isRef;
   }
 
   export function unRef(val: any) {
-    return !!val.isRef && val.value;
+    return isRef(val) ? val.value : val;
   }
+
+  export function proxyRefs(val: any) {
+    return new Proxy(val, {
+      get(target, key) {
+        // 通过unRef函数判断时候返回ref包装的值
+        return unRef(Reflect.get(target, key));
+      },
+      set(target, key, value) {
+
+        // 如果`target[key]`是ref包装的值而value不是ref格式的则通过`.value`赋值
+        if(isRef(target[key]) && isRef(value)){
+          return target[key].value = value;
+        }
+        // 否则通过反射直接赋值
+        return Reflect.set(target, key, value);
+      }
+    })
+  }
+
 
 ```
