@@ -16,4 +16,32 @@ describe('computed', () => {
 
     expect(wapper.value).toBe(18)
   })
+
+  it("should compute lazily", () => {
+    const user = reactive({
+      age: 1,
+    });
+    const getter = jest.fn(() => {
+      return user.age;
+    });
+
+    const cUser = computed(getter);
+
+    expect(getter).not.toHaveBeenCalled();
+
+    expect(cUser.value).toBe(1);
+    expect(getter).toHaveBeenCalledTimes(1);
+
+    cUser.value;
+    expect(getter).toHaveBeenCalledTimes(1);
+
+    user.age = 18;
+    expect(getter).toHaveBeenCalledTimes(1);
+
+    expect(cUser.value).toBe(18);
+    expect(getter).toHaveBeenCalledTimes(2);
+
+    cUser.value;
+    expect(getter).toHaveBeenCalledTimes(2);
+  });
 })

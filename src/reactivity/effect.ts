@@ -2,7 +2,7 @@ import { extend } from "../shared"
 
 let shouldTrack: boolean = false
 let effectFun: EffectReactive
-class EffectReactive {
+export class EffectReactive {
   private _fun: Ifun
   active: boolean = true
   onStop?: () => void
