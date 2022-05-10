@@ -51,14 +51,21 @@
   }
 
   class ComputedRefImpl() {
+    private _val: any
     private _fun: Function
+    private _lock: boolean
 
     constructor(fun: Function) {
+      this._lock = true;
       this._fun = fun;
     }
 
     get value() {
-      return this._value
+      // 利用自锁 在第一次执行_fun方法时 进行锁定 每次调用只返回以前保存的值
+      if(this._lock) {
+        this._val = this._fun();
+      }
+      return this._val
     }
   }
 
