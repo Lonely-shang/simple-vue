@@ -38,6 +38,16 @@
       cUser.value;
       expect(getter).toHaveBeenCalledTimes(1);
 
+      // 给user重新设置值时不会触发computer
+      user.age = 18;
+      expect(getter).toHaveBeenCalledTimes(1);
+
+      // 当再次调用cUser.value时会重新执行computed方法
+      expect(cUser.value).toBe(18);
+      expect(getter).toHaveBeenCalledTimes(2);
+
+      cUser.value;
+      expect(getter).toHaveBeenCalledTimes(2);
     });
   });
 
@@ -56,13 +66,15 @@
     private _lock: boolean
 
     constructor(fun: Function) {
+      // 初始化时将自锁`_lock`设置为`true`
       this._lock = true;
       this._fun = fun;
     }
 
     get value() {
       // 利用自锁 在第一次执行_fun方法时 进行锁定 每次调用只返回以前保存的值
-      if(this._lock) {
+      if(this._lock) { // 当 user.age = 18; 被重新赋值时会解除锁定
+        this._lock = true;
         this._val = this._fun();
       }
       return this._val
