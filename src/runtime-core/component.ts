@@ -13,7 +13,7 @@ export function setupComponent(instance: any) {
   // 初始化props
   // 初始化slots
 
-  // 处理
+  //
   setupStatefulComponent(instance)
 }
 
