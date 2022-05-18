@@ -1,5 +1,10 @@
+import typescript from "@rollup/plugin-typescript";
+
 export default {
-  input: '',
+  input: 'src/runtime-core/index.ts',
+  plugins: [
+    typescript()
+  ],
   output: [
     {
       format: "cjs",
