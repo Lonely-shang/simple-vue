@@ -1,3 +1,4 @@
+import packageJson from './package.json';
 import typescript from "@rollup/plugin-typescript";
 
 export default {
@@ -8,13 +9,12 @@ export default {
   output: [
     {
       format: "cjs",
-      file: 'dist/simple-vue.cjs.js',
+      file: packageJson.module,
       sourcemap: true,
     },
     {
-      name: "vue",
       format: "es",
-      file: 'dist/simple-vue.esm.js',
+      file: packageJson.main,
       sourcemap: true,
     },
   ],

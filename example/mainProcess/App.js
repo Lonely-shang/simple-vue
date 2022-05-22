@@ -2,7 +2,7 @@
 
 export const  App = {
 
-  render() {
+  render(h) {
     return h('div', 'hello '+ this.msg)
   },
 

@@ -2,10 +2,11 @@
 	"name": "simple-vue",
 	"version": "1.0.0",
 	"description": "",
-	"main": "",
+	"main": "dist/simple-vue.esm.js",
+	"module": "dist/simple-vue.cjs.js",
 	"scripts": {
 		"test": "jest",
-		"build": "rollup -c",
+		"build": "rollup -c rollup.config.js",
 		"lint": "eslint src --fix"
 	},
 	"husky": {
