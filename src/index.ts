@@ -1,1 +1,1 @@
-export * from './runtime-core/createApp'
+export * from './runtime-core/index'

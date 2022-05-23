@@ -1,5 +1,7 @@
-import { createApp } from "./createApp"; 
+import { createApp } from "./createApp";
+import { h } from "./h"
 
 export {
-  createApp
+  createApp,
+  h
 }

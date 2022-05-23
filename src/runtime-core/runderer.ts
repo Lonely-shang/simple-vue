@@ -1,3 +1,4 @@
+import { isObject } from "../shared/index"
 import { createComponentInstance, setupComponent } from "./component"
 
 // 将虚拟节点渲染到真实dom
@@ -9,13 +10,45 @@ export function render(vnode, container) {
 
 function path(vnode, container) {
   // 处理组件
+  /**
+   * 通过vnode.type判断是否是组件
+   */
+    if(typeof vnode.type === "string") {
+      processElement(vnode, container)
+    }
+    else if(isObject(vnode.type)) {
+      processComponent(vnode, container)
+    }
+}
 
-  // 判断是否是 element
-  processComponent(vnode, container)
+function processElement(vnode: any, container: any) {
+  mountElement(vnode, container)
+}
+
+function mountElement(vnode: any, container: any) {
+  const { type, props, children } = vnode
+
+  const el = document.createElement(type);
+
+  if(typeof children === "string") {
+    el.textContent = children
+  }else if(Array.isArray(children)) {
+    mountChildren(vnode, el)
+  }
+
+  for (const key in props) {
+    el.setAttribute(key, props[key])
+  }
+
+  container.appendChild(el)
+
+}
+
+function mountChildren(vnode, container) {
+  vnode.children.map(v => path(v, container))
 }
 
 function processComponent(vnode: any, container: any) {
-
   // 挂载组件
   mountComponent(vnode, container)
 }
@@ -35,4 +68,3 @@ function setupRenderEffect(instance: any, container: any) {
   // vnode -> element -> mountElement
   path(subTree, container)
 }
-
