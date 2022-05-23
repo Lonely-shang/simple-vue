@@ -1,7 +1,3 @@
-'use strict';
-
-Object.defineProperty(exports, '__esModule', { value: true });
-
 function createComponentInstance(vnode) {
     const component = {
         vnode,
@@ -34,7 +30,7 @@ function handlerSetupResult(instance, setupResult) {
 }
 function finishComponentSetup(instance) {
     const Component = instance.type;
-    if (!Component.render) {
+    if (Component.render) {
         instance.render = Component.render;
     }
 }
@@ -77,7 +73,7 @@ function createVNode(type, props, children) {
 function createApp(rootComponent) {
     return {
         mount(domId) {
-            const rootContainer = document.getElementById(domId);
+            const rootContainer = document.querySelector(domId);
             if (!rootContainer) {
                 throw new Error(`找不到指定的dom元素: ${domId}`);
             }
@@ -89,5 +85,5 @@ function createApp(rootComponent) {
     };
 }
 
-exports.createApp = createApp;
+export { createApp };
 //# sourceMappingURL=simple-vue.cjs.js.map

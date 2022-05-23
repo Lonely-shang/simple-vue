@@ -5,7 +5,7 @@ import { createVNode } from "./vnode"
 export function createApp(rootComponent) {
   return {
     mount(domId: string) {
-      const rootContainer = document.getElementById(domId)
+      const rootContainer = document.querySelector(domId)
       if (!rootContainer) {
         throw new Error(`找不到指定的dom元素: ${domId}`)
       }

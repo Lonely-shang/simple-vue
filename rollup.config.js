@@ -2,7 +2,7 @@ import packageJson from './package.json';
 import typescript from "@rollup/plugin-typescript";
 
 export default {
-  input: 'src/runtime-core/index.ts',
+  input: 'src/index.ts',
   plugins: [
     typescript()
   ],
