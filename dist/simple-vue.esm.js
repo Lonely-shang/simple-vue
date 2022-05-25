@@ -56,6 +56,7 @@ function path(vnode, container) {
     if (typeof vnode.type === "string") {
         processElement(vnode, container);
     }
+    // 若type类型是object 则说明vnode是组件类型 调用processComponent处理组件
     else if (isObject(vnode.type)) {
         processComponent(vnode, container);
     }
