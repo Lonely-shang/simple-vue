@@ -120,12 +120,12 @@ function processComponent(vnode, container) {
     // 挂载组件
     mountComponent(vnode, container);
 }
-function mountComponent(vnode, container) {
-    const instance = createComponentInstance(vnode);
+function mountComponent(initialVnode, container) {
+    const instance = createComponentInstance(initialVnode);
     setupComponent(instance);
-    setupRenderEffect(instance, vnode, container);
+    setupRenderEffect(instance, initialVnode, container);
 }
-function setupRenderEffect(instance, vnode, container) {
+function setupRenderEffect(instance, initialVnode, container) {
     const { proxy } = instance;
     // render函数
     const subTree = instance.render.bind(proxy)(h);
@@ -134,7 +134,7 @@ function setupRenderEffect(instance, vnode, container) {
     // vnode -> path
     // vnode -> element -> mountElement
     path(subTree, container);
-    vnode.el = subTree.el;
+    initialVnode.el = subTree.el;
 }
 
 function createApp(rootComponent) {
