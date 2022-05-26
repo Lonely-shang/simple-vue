@@ -3,6 +3,7 @@
 export const  App = {
 
   render(h) {
+    window.proxy = this;
     return h(
       'div',
       {

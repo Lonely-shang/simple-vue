@@ -32,6 +32,8 @@ function mountElement(vnode: any, container: any) {
 
   const el = document.createElement(type);
 
+  vnode.el = el;
+
   if(typeof children === "string") {
     el.textContent = children
   }else if(Array.isArray(children)) {
@@ -60,14 +62,22 @@ function mountComponent(vnode: any, container: any) {
 
   setupComponent(instance)
 
-  setupRenderEffect(instance, container)
+  setupRenderEffect(instance, vnode, container)
 }
 
-function setupRenderEffect(instance: any, container: any) {
+function setupRenderEffect(instance: any, vnode: any, container: any) {
+
   const { proxy } = instance
+
+  // render函数
   const subTree = instance.render.bind(proxy)(h)
+
+  // TODO
+  // 可能是templete
 
   // vnode -> path
   // vnode -> element -> mountElement
   path(subTree, container)
+
+  vnode.el = subTree.el
 }

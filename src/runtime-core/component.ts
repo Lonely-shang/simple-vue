@@ -1,3 +1,4 @@
+import { PublicInstanceProxyHandlers } from "./componentPublicInstance"
 
 export function createComponentInstance(vnode: any) {
   const component = {
@@ -23,13 +24,7 @@ function setupStatefulComponent(instance: any) {
   const { setup } = instance.type
 
   // 设置代理对象
-  instance.proxy = new Proxy({}, {
-    get (target, key) {
-      if(key in instance.setupState) {
-        return instance.setupState[key]
-      }
-    }
-  })
+  instance.proxy = new Proxy({ _ : instance}, PublicInstanceProxyHandlers)
 
   if(setup) {
     const setupResult = setup()

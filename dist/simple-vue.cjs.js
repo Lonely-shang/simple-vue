@@ -2,6 +2,22 @@ function isObject(obj) {
     return obj instanceof Object && obj !== null;
 }
 
+const publicPropertiesMap = {
+    $el: (i) => i.vnode.el
+};
+const PublicInstanceProxyHandlers = {
+    get({ _: instance }, key) {
+        if (key in instance.setupState) {
+            return instance.setupState[key];
+        }
+        const publicGetter = publicPropertiesMap[key];
+        // 验证publicGetter是否存在
+        if (publicGetter) {
+            return publicGetter(instance);
+        }
+    }
+};
+
 function createComponentInstance(vnode) {
     const component = {
         vnode,
@@ -20,13 +36,7 @@ function setupComponent(instance) {
 function setupStatefulComponent(instance) {
     const { setup } = instance.type;
     // 设置代理对象
-    instance.proxy = new Proxy({}, {
-        get(target, key) {
-            if (key in instance.setupState) {
-                return instance.setupState[key];
-            }
-        }
-    });
+    instance.proxy = new Proxy({ _: instance }, PublicInstanceProxyHandlers);
     if (setup) {
         const setupResult = setup();
         handlerSetupResult(instance, setupResult);
@@ -87,6 +97,7 @@ function processElement(vnode, container) {
 function mountElement(vnode, container) {
     const { type, props, children } = vnode;
     const el = document.createElement(type);
+    vnode.el = el;
     if (typeof children === "string") {
         el.textContent = children;
     }
@@ -108,14 +119,18 @@ function processComponent(vnode, container) {
 function mountComponent(vnode, container) {
     const instance = createComponentInstance(vnode);
     setupComponent(instance);
-    setupRenderEffect(instance, container);
+    setupRenderEffect(instance, vnode, container);
 }
-function setupRenderEffect(instance, container) {
+function setupRenderEffect(instance, vnode, container) {
     const { proxy } = instance;
+    // render函数
     const subTree = instance.render.bind(proxy)(h);
+    // TODO
+    // 可能是templete
     // vnode -> path
     // vnode -> element -> mountElement
     path(subTree, container);
+    vnode.el = subTree.el;
 }
 
 function createApp(rootComponent) {
