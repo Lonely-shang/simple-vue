@@ -1,5 +1,6 @@
 import { isObject } from "../shared/index"
 import { createComponentInstance, setupComponent } from "./component"
+import { h } from "./h"
 
 // 将虚拟节点渲染到真实dom
 export function render(vnode, container) {
@@ -63,7 +64,8 @@ function mountComponent(vnode: any, container: any) {
 }
 
 function setupRenderEffect(instance: any, container: any) {
-  const subTree = instance.render()
+  const { proxy } = instance
+  const subTree = instance.render.bind(proxy)(h)
 
   // vnode -> path
   // vnode -> element -> mountElement

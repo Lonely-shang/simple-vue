@@ -9,7 +9,8 @@ function isObject(obj) {
 function createComponentInstance(vnode) {
     const component = {
         vnode,
-        type: vnode.type
+        type: vnode.type,
+        setupState: {},
     };
     return component;
 }
@@ -21,7 +22,15 @@ function setupComponent(instance) {
     setupStatefulComponent(instance);
 }
 function setupStatefulComponent(instance) {
-    const { setup } = instance.vnode.type;
+    const { setup } = instance.type;
+    // 设置代理对象
+    instance.proxy = new Proxy({}, {
+        get(target, key) {
+            if (key in instance.setupState) {
+                return instance.setupState[key];
+            }
+        }
+    });
     if (setup) {
         const setupResult = setup();
         handlerSetupResult(instance, setupResult);
@@ -41,6 +50,21 @@ function finishComponentSetup(instance) {
     // if(Component.render) {
     instance.render = Component.render;
     // }
+}
+
+function createVNode(type, props, children) {
+    const vnode = {
+        type,
+        props,
+        children,
+    };
+    return vnode;
+}
+
+function h(type, props, children) {
+    // 创建虚拟节点
+    const vnode = createVNode(type, props, children);
+    return vnode;
 }
 
 // 将虚拟节点渲染到真实dom
@@ -91,19 +115,11 @@ function mountComponent(vnode, container) {
     setupRenderEffect(instance, container);
 }
 function setupRenderEffect(instance, container) {
-    const subTree = instance.render();
+    const { proxy } = instance;
+    const subTree = instance.render.bind(proxy)(h);
     // vnode -> path
     // vnode -> element -> mountElement
     path(subTree, container);
-}
-
-function createVNode(type, props, children) {
-    const vnode = {
-        type,
-        props,
-        children,
-    };
-    return vnode;
 }
 
 function createApp(rootComponent) {
@@ -119,12 +135,6 @@ function createApp(rootComponent) {
             render(vnode, rootContainer);
         }
     };
-}
-
-function h(type, props, children) {
-    // 创建虚拟节点
-    const vnode = createVNode(type, props, children);
-    return vnode;
 }
 
 exports.createApp = createApp;
