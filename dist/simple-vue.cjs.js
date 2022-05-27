@@ -1,7 +1,3 @@
-function isObject(obj) {
-    return obj instanceof Object && obj !== null;
-}
-
 const publicPropertiesMap = {
     $el: (i) => i.vnode.el
 };
@@ -63,8 +59,20 @@ function createVNode(type, props, children) {
         type,
         props,
         children,
+        shapeFlag: getShapeFlag(type),
+        el: null
     };
+    if (typeof children === 'string') {
+        vnode.shapeFlag |= 4 /* TEXT_CHILDREN */;
+    }
+    else if (Array.isArray(children)) {
+        vnode.shapeFlag |= 8 /* ARRAY_CHILDREN */;
+    }
     return vnode;
+}
+function getShapeFlag(type) {
+    return typeof type === 'string' ?
+        1 /* ELEMENT */ : 2 /* STATEFUL_COMPONENT */;
 }
 
 function h(type, props, children) {
@@ -79,15 +87,16 @@ function render(vnode, container) {
     path(vnode, container);
 }
 function path(vnode, container) {
+    const { shapeFlag } = vnode;
     // 处理组件
     /**
      * 通过vnode.type判断是否是组件
      */
-    if (typeof vnode.type === "string") {
+    if (shapeFlag & 1 /* ELEMENT */) {
         processElement(vnode, container);
     }
     // 若type类型是object 则说明vnode是组件类型 调用processComponent处理组件
-    else if (isObject(vnode.type)) {
+    else if (shapeFlag & 2 /* STATEFUL_COMPONENT */) {
         processComponent(vnode, container);
     }
 }
@@ -95,13 +104,13 @@ function processElement(vnode, container) {
     mountElement(vnode, container);
 }
 function mountElement(vnode, container) {
-    const { type, props, children } = vnode;
+    const { type, props, children, shapeFlag } = vnode;
     const el = document.createElement(type);
     vnode.el = el;
-    if (typeof children === "string") {
+    if (shapeFlag & 4 /* TEXT_CHILDREN */) {
         el.textContent = children;
     }
-    else if (Array.isArray(children)) {
+    else if (shapeFlag & 8 /* ARRAY_CHILDREN */) {
         mountChildren(vnode, el);
     }
     for (const key in props) {
