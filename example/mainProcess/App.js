@@ -10,6 +10,9 @@ export const  App = {
         id: 'el',
         onClick: () => {
           alert('hello', 'world');
+        },
+        onMousedown: () => {
+          console.log('mouse down');
         }
       },
       'Hello ' + this.msg

@@ -115,8 +115,10 @@ function mountElement(vnode, container) {
     }
     for (const key in props) {
         const _key = props[key];
-        if (key === 'onClick') {
-            el.addEventListener('click', _key);
+        const isOn = (key) => /^on[A-Z]/.test(key);
+        if (isOn(key)) {
+            const event = key.slice(2).toLowerCase();
+            el.addEventListener(event, _key);
         }
         else {
             el.setAttribute(key, _key);
