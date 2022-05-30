@@ -44,7 +44,13 @@ function mountElement(vnode: any, container: any) {
   }
 
   for (const key in props) {
-    el.setAttribute(key, props[key])
+    const _key = props[key]
+    if (key === 'onClick') {
+      el.addEventListener('click', _key)
+    }
+    else {
+      el.setAttribute(key, _key)
+    }
   }
 
   container.appendChild(el)

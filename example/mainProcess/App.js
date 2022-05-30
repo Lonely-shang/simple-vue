@@ -8,6 +8,9 @@ export const  App = {
       'div',
       {
         id: 'el',
+        onClick: () => {
+          alert('hello', 'world');
+        }
       },
       'Hello ' + this.msg
     )
