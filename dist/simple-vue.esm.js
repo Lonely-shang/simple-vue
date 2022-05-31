@@ -6,6 +6,7 @@ const extend = Object.assign;
 function isObject(obj) {
     return obj instanceof Object && obj !== null;
 }
+const hasOwn = (value, key) => Object.prototype.hasOwnProperty.call(value, key);
 
 const refectMap = new Map();
 // 触发依赖
@@ -116,7 +117,6 @@ function initProps(instance, rawProps) {
 const publicPropertiesMap = {
     $el: (i) => i.vnode.el
 };
-const hasOwn = (value, key) => Object.prototype.hasOwnProperty.call(value, key);
 const PublicInstanceProxyHandlers = {
     get({ _: instance }, key) {
         const { setupState, props } = instance;
