@@ -2,13 +2,129 @@
 
 Object.defineProperty(exports, '__esModule', { value: true });
 
+const extend = Object.assign;
+function isObject(obj) {
+    return obj instanceof Object && obj !== null;
+}
+
+const refectMap = new Map();
+// 触发依赖
+function trigger(target, key, value) {
+    const depsMap = refectMap === null || refectMap === void 0 ? void 0 : refectMap.get(target);
+    const dep = depsMap === null || depsMap === void 0 ? void 0 : depsMap.get(key);
+    if (dep)
+        triggerEffect(dep);
+}
+function triggerEffect(dep) {
+    for (const item of dep) {
+        if (item.scheduler) {
+            item.scheduler();
+        }
+        else {
+            item.run();
+        }
+    }
+}
+
+const get = createGetter();
+const set = createSetter();
+const readonlyGet = createGetter(true);
+const shallowReadonlyGet = createGetter(true, true);
+// 创建get方法 通过传入isReadonly参数判断是否只读
+function createGetter(isReadonly = false, shallow = false) {
+    return function get(target, key) {
+        // 如果传入的的key是`ReactiveFlags.IS_READONLY`则返回传入的isReadonly
+        if (key === "__v_isReadonly" /* IS_READONLY */) {
+            return isReadonly;
+        }
+        else if (key === "__v_isReactive" /* IS_REACTIVE */) {
+            return !isReadonly;
+        }
+        const res = Reflect.get(target, key);
+        // 如果是shallow包装的类型 直接返回 
+        if (shallow) {
+            return res;
+        }
+        // res如果是对象，则将循环嵌套
+        if (isObject(res)) {
+            // 根据isreadonly判断是否是只读
+            return isReadonly ? readonly(res) : reactive(res);
+        }
+        return res;
+    };
+}
+// 创建set函数
+function createSetter() {
+    return function set(target, key, value) {
+        const res = Reflect.set(target, key, value);
+        trigger(target, key);
+        return res;
+    };
+}
+function mutableHandlers() {
+    return {
+        get,
+        set
+    };
+}
+/**
+ * 处理readonly包装返回proxy的option
+ * @returns {}
+ */
+function readonlyHandlers() {
+    return {
+        get: readonlyGet,
+        set(target, key, value) {
+            console.warn(`Set operation on key "${String(key)}" failed: target is readonly.`, target);
+            return true;
+        }
+    };
+}
+function shallowReadonlyHandlers() {
+    return extend(readonlyHandlers(), {
+        get: shallowReadonlyGet
+    });
+}
+
+/**
+ * 将传入的对象包装成响应式的
+ * @param raw
+ * @returns
+ */
+function reactive(raw) {
+    return createReactiveObject(raw, mutableHandlers());
+}
+// 将传入的对象包装成只读的对象
+function readonly(raw) {
+    return createReactiveObject(raw, readonlyHandlers());
+}
+function shallowReadonly(raw) {
+    return createReactiveObject(raw, shallowReadonlyHandlers());
+}
+function createReactiveObject(raw, baseHandler) {
+    if (!isObject(raw)) {
+        console.warn(`[vue-reactivity] value cannot be made reactive: ${raw}`);
+        return raw;
+    }
+    return new Proxy(raw, baseHandler);
+}
+
+function initProps(instance, rawProps) {
+    instance.props = rawProps || {};
+}
+
 const publicPropertiesMap = {
     $el: (i) => i.vnode.el
 };
+const hasOwn = (value, key) => Object.prototype.hasOwnProperty.call(value, key);
 const PublicInstanceProxyHandlers = {
     get({ _: instance }, key) {
-        if (key in instance.setupState) {
-            return instance.setupState[key];
+        const { setupState, props } = instance;
+        if (hasOwn(setupState, key)) {
+            return setupState[key];
+        }
+        else if (hasOwn(props, key)) {
+            return props[key];
         }
         const publicGetter = publicPropertiesMap[key];
         // 验证publicGetter是否存在
@@ -23,12 +139,14 @@ function createComponentInstance(vnode) {
         vnode,
         type: vnode.type,
         setupState: {},
+        props: {}
     };
     return component;
 }
 function setupComponent(instance) {
     // TODO
     // 初始化props
+    initProps(instance, instance.vnode.props);
     // 初始化slots
     //
     setupStatefulComponent(instance);
@@ -38,7 +156,7 @@ function setupStatefulComponent(instance) {
     // 设置代理对象
     instance.proxy = new Proxy({ _: instance }, PublicInstanceProxyHandlers);
     if (setup) {
-        const setupResult = setup();
+        const setupResult = setup(shallowReadonly(instance.props));
         handlerSetupResult(instance, setupResult);
     }
 }

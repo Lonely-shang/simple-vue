@@ -1,9 +1,8 @@
-
+import { Foo } from './Foo.js'
 
 export const  App = {
-
+  name: 'App',
   render(h) {
-    window.proxy = this;
     return h(
       'div',
       {
@@ -15,7 +14,12 @@ export const  App = {
           console.log('mouse down');
         }
       },
-      'Hello ' + this.msg
+      [
+        h('div', {}, 'Hello' + this.msg),
+        h(Foo, {
+          count: 1
+        })
+      ]
     )
   },
 

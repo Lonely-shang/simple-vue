@@ -1,3 +1,4 @@
+import { isObject } from "../shared/index";
 import { mutableHandlers, readonlyHandlers, shallowReadonlyHandlers } from "./baseHandlers";
 
 export const enum ReactiveFlags {
@@ -45,5 +46,9 @@ export function isProxy(raw) {
 }
 
 function createReactiveObject(raw: Iraw, baseHandler) {
+  if (!isObject(raw)) {
+    console.warn(`[vue-reactivity] value cannot be made reactive: ${raw}`);
+    return raw
+  }
   return new Proxy(raw, baseHandler)
 }
