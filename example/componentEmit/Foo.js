@@ -5,6 +5,7 @@ export const Foo = {
 
     const emitClick = () => {
       emit('add', 1, 2)
+      emit('add-foo')
     }
 
     return {

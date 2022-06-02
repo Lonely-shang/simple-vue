@@ -13,6 +13,9 @@ export const  App = {
         h(Foo, {
           onAdd(a, b) {
             console.log('emit add', a, b)
+          },
+          onAddFoo() {
+            console.log('emit addFoo')
           }
         })
       ]

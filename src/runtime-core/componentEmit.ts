@@ -4,6 +4,12 @@ export function emit (instance, event, ...args: any[]) {
 
   const { props } = instance
 
+  const camelize = (str: string) => {
+    return str.replace(/-(\w)/g, (all, letter: string) => {
+      return letter ? letter.toUpperCase() : ''
+    })
+  }
+
   const capitalize = (str: string) => {
     return str.charAt(0).toUpperCase() + str.slice(1)
   }
@@ -12,7 +18,8 @@ export function emit (instance, event, ...args: any[]) {
     return `on${capitalize(key)}`
   }
 
-  const handler = props[toHandlerKey(event)]
+  const handlerKey = toHandlerKey(camelize(event))
+  const handler = props[handlerKey]
 
   handler && handler(...args);
 }
