@@ -10,7 +10,11 @@ export const  App = {
       },
       [
         h('div', {}, 'Hello' + this.msg),
-        h(Foo, {})
+        h(Foo, {
+          onAdd() {
+            console.log('emit add')
+          }
+        })
       ]
     )
   },

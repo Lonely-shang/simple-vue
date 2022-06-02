@@ -1,10 +1,10 @@
 
 export const Foo = {
   name: 'Foo',
-  setup (props) {
+  setup (props, { emit }) {
 
     const emitClick = () => {
-      console.log('click');
+      emit('add')
     }
 
     return {

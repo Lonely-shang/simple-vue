@@ -110,6 +110,18 @@ function createReactiveObject(raw, baseHandler) {
     return new Proxy(raw, baseHandler);
 }
 
+function emit(instance, event) {
+    const { props } = instance;
+    const capitalize = (str) => {
+        return str.charAt(0).toUpperCase() + str.slice(1);
+    };
+    const toHandlerKey = (key) => {
+        return `on${capitalize(key)}`;
+    };
+    const handler = props[toHandlerKey(event)];
+    handler && handler();
+}
+
 function initProps(instance, rawProps) {
     instance.props = rawProps || {};
 }
@@ -139,8 +151,10 @@ function createComponentInstance(vnode) {
         vnode,
         type: vnode.type,
         setupState: {},
-        props: {}
+        props: {},
+        emit: () => { },
     };
+    component.emit = emit.bind(null, component);
     return component;
 }
 function setupComponent(instance) {
@@ -156,7 +170,9 @@ function setupStatefulComponent(instance) {
     // 设置代理对象
     instance.proxy = new Proxy({ _: instance }, PublicInstanceProxyHandlers);
     if (setup) {
-        const setupResult = setup(shallowReadonly(instance.props));
+        const setupResult = setup(shallowReadonly(instance.props), {
+            emit: instance.emit
+        });
         handlerSetupResult(instance, setupResult);
     }
 }
