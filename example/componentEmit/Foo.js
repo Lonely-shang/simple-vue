@@ -4,7 +4,7 @@ export const Foo = {
   setup (props, { emit }) {
 
     const emitClick = () => {
-      emit('add')
+      emit('add', 1, 2)
     }
 
     return {

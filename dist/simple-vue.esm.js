@@ -110,7 +110,7 @@ function createReactiveObject(raw, baseHandler) {
     return new Proxy(raw, baseHandler);
 }
 
-function emit(instance, event) {
+function emit(instance, event, ...args) {
     const { props } = instance;
     const capitalize = (str) => {
         return str.charAt(0).toUpperCase() + str.slice(1);
@@ -119,7 +119,7 @@ function emit(instance, event) {
         return `on${capitalize(key)}`;
     };
     const handler = props[toHandlerKey(event)];
-    handler && handler();
+    handler && handler(...args);
 }
 
 function initProps(instance, rawProps) {

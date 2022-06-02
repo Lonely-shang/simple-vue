@@ -1,6 +1,6 @@
 
 
-export function emit (instance, event) {
+export function emit (instance, event, ...args: any[]) {
 
   const { props } = instance
 
@@ -14,5 +14,5 @@ export function emit (instance, event) {
 
   const handler = props[toHandlerKey(event)]
 
-  handler && handler();
+  handler && handler(...args);
 }
