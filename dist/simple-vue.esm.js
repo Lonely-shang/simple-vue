@@ -7,6 +7,17 @@ function isObject(obj) {
     return obj instanceof Object && obj !== null;
 }
 const hasOwn = (value, key) => Object.prototype.hasOwnProperty.call(value, key);
+const camelize = (str) => {
+    return str.replace(/-(\w)/g, (all, letter) => {
+        return letter ? letter.toUpperCase() : '';
+    });
+};
+const capitalize = (str) => {
+    return str.charAt(0).toUpperCase() + str.slice(1);
+};
+const toHandlerKey = (key) => {
+    return `on${capitalize(key)}`;
+};
 
 const refectMap = new Map();
 // 触发依赖
@@ -112,17 +123,6 @@ function createReactiveObject(raw, baseHandler) {
 
 function emit(instance, event, ...args) {
     const { props } = instance;
-    const camelize = (str) => {
-        return str.replace(/-(\w)/g, (all, letter) => {
-            return letter ? letter.toUpperCase() : '';
-        });
-    };
-    const capitalize = (str) => {
-        return str.charAt(0).toUpperCase() + str.slice(1);
-    };
-    const toHandlerKey = (key) => {
-        return `on${capitalize(key)}`;
-    };
     const handlerKey = toHandlerKey(camelize(event));
     const handler = props[handlerKey];
     handler && handler(...args);
