@@ -28,7 +28,7 @@
 - [ ] 支持 element 类型
 - [x] 初始化 props
 - [ ] setup 可获取 props 和 context
-- [ ] 支持 component emit
+- [x] 支持 component emit
 - [ ] 支持 proxy
 - [x] 可以在 render 函数中获取 setup 返回的对象
 - [ ] nextTick 的实现
