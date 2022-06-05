@@ -154,9 +154,17 @@ const PublicInstanceProxyHandlers = {
 };
 
 function initSlots(instance, children) {
-    // TODO
-    // 初始化slots
-    instance.slots = Array.isArray(children) ? children : [children];
+    normalizeObjectSlots(children, instance.slots);
+}
+function normalizeObjectSlots(children, slots) {
+    for (const key in children) {
+        console.log(key);
+        const value = children[key];
+        slots[key] = normalizeSlotsValue(value);
+    }
+}
+function normalizeSlotsValue(value) {
+    return Array.isArray(value) ? value : [value];
 }
 
 function createComponentInstance(vnode) {
@@ -318,8 +326,11 @@ function createApp(rootComponent) {
     };
 }
 
-function renderSlots(slots) {
-    return createVNode('div', {}, slots);
+function renderSlots(slots, name) {
+    const slot = slots[name];
+    if (slot) {
+        return createVNode('div', {}, slot);
+    }
 }
 
 exports.createApp = createApp;

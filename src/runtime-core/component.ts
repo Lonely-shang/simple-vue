@@ -1,4 +1,5 @@
 import { shallowReadonly } from "../reactivity/reactive"
+import { isObject } from "../shared/index"
 import { emit } from "./componentEmit"
 import { initProps } from "./componentProps"
 import { PublicInstanceProxyHandlers } from "./componentPublicInstance"
