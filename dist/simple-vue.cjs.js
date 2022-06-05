@@ -150,13 +150,15 @@ const PublicInstanceProxyHandlers = {
 };
 
 function initSlots(instance, children) {
-    normalizeObjectSlots(children, instance.slots);
+    if (instance.vnode.shapeFlag & 16 /* SLOTS_CHILDREN */) {
+        normalizeObjectSlots(children, instance.slots);
+    }
 }
 function normalizeObjectSlots(children, slots) {
     for (const key in children) {
         console.log(key);
         const value = children[key];
-        slots[key] = normalizeSlotsValue(value);
+        slots[key] = (props) => normalizeSlotsValue(value(props));
     }
 }
 function normalizeSlotsValue(value) {
@@ -224,6 +226,9 @@ function createVNode(type, props, children) {
     }
     else if (Array.isArray(children)) {
         vnode.shapeFlag |= 8 /* ARRAY_CHILDREN */;
+    }
+    if ((vnode.shapeFlag & 2 /* STATEFUL_COMPONENT */) && typeof children === 'object') {
+        vnode.shapeFlag |= 16 /* SLOTS_CHILDREN */;
     }
     return vnode;
 }
@@ -322,9 +327,12 @@ function createApp(rootComponent) {
     };
 }
 
-function renderSlots(slots, name) {
-    const slot = slots[name];
+function renderSlots(slots, name, props) {
+    let slot = slots[name];
     if (slot) {
+        if (typeof slot === 'function') {
+            slot = slot(props);
+        }
         return createVNode('div', {}, slot);
     }
 }

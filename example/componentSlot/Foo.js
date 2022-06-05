@@ -8,7 +8,7 @@ export const Foo = {
 
   render (h) {
     const foo = h('p', {}, 'foo')
-    console.log(this.$slots);
-    return h('div', {}, [renderSlots(this.$slots, 'header'), foo, renderSlots(this.$slots, 'footer')])
+    const age = 28
+    return h('div', {}, [renderSlots(this.$slots, 'header', { age }), foo, renderSlots(this.$slots, 'footer')])
   }
 }

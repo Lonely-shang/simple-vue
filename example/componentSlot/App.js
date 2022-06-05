@@ -8,8 +8,8 @@ export const  App = {
       Foo,
       {},
       {
-        header: h('div', {}, 'Header'),
-        footer: h('div', {}, 'Footer'),
+        header: (slot) =>  h('div', {}, 'Header' + slot.age),
+        footer: () =>  h('div', {}, 'Footer'),
       }
     )
     return h(
