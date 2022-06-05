@@ -152,7 +152,7 @@ const PublicInstanceProxyHandlers = {
 function initSlots(instance, children) {
     // TODO
     // 初始化slots
-    instance.slots = children;
+    instance.slots = Array.isArray(children) ? children : [children];
 }
 
 function createComponentInstance(vnode) {
@@ -314,5 +314,9 @@ function createApp(rootComponent) {
     };
 }
 
-export { createApp, h };
+function renderSlots(slots) {
+    return createVNode('div', {}, slots);
+}
+
+export { createApp, h, renderSlots };
 //# sourceMappingURL=simple-vue.cjs.js.map

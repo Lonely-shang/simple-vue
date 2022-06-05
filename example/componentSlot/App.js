@@ -10,7 +10,7 @@ export const  App = {
       },
       [
         h('div', {}, 'Hello' + this.msg),
-        h(Foo, {}, h('p', {}, '12345' ))
+        h(Foo, {}, h('p', {}, '12345' )),
       ]
     )
   },
