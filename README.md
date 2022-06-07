@@ -25,7 +25,7 @@
 #### runtime-core
 
 - [x] 支持组件类型
-- [ ] 支持 element 类型
+- [x] 支持 element 类型
 - [x] 初始化 props
 - [x] setup 可获取 props 和 context
 - [x] 支持 component emit
