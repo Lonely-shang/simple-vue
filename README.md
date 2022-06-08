@@ -12,7 +12,6 @@
 - [x] trigger 触发依赖
 - [x] 支持 isReactive
 - [x] 支持嵌套 reactive
-- [ ] 支持 toRaw
 - [x] 支持 effect.scheduler
 - [x] 支持 effect.stop
 - [x] 支持 isReadonly
