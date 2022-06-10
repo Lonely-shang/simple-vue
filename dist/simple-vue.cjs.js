@@ -333,6 +333,7 @@ function renderSlots(slots, name, props) {
         if (typeof slot === 'function') {
             slot = slot(props);
         }
+        // children is an array of slot objects
         return createVNode('div', {}, slot);
     }
 }
