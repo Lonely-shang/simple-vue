@@ -11,19 +11,32 @@ export function render(vnode, container) {
 }
 
 function path(vnode, container) {
-  const { shapeFlag } = vnode
+  const { type, shapeFlag } = vnode
   // 处理组件
   /**
    * 通过vnode.type判断是否是组件
    */
-    if(shapeFlag & ShapeFlags.ELEMENT) {
-      processElement(vnode, container)
-    }
-    // 若type类型是object 则说明vnode是组件类型 调用processComponent处理组件
-    else if(shapeFlag & ShapeFlags.STATEFUL_COMPONENT) {
-      processComponent(vnode, container)
+    switch (type) {
+      case "Fargment":
+        processFargment(vnode, container);
+        break;
+    
+      default:
+        if(shapeFlag & ShapeFlags.ELEMENT) {
+          processElement(vnode, container)
+        }
+        // 若type类型是object 则说明vnode是组件类型 调用processComponent处理组件
+        else if(shapeFlag & ShapeFlags.STATEFUL_COMPONENT) {
+          processComponent(vnode, container)
+        }
+        break;
     }
 }
+
+function processFargment(vnode: any, container: any) {
+  mountChildren(vnode, container)
+}
+
 
 function processElement(vnode: any, container: any) {
   mountElement(vnode, container)

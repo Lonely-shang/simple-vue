@@ -8,6 +8,6 @@ export function renderSlots (slots, name, props) {
     }
 
     // children is an array of slot objects
-    return createVNode('div', {}, slot)
+    return createVNode('Fargment', {}, slot)
   }
 }

@@ -249,18 +249,28 @@ function render(vnode, container) {
     path(vnode, container);
 }
 function path(vnode, container) {
-    const { shapeFlag } = vnode;
+    const { type, shapeFlag } = vnode;
     // 处理组件
     /**
      * 通过vnode.type判断是否是组件
      */
-    if (shapeFlag & 1 /* ELEMENT */) {
-        processElement(vnode, container);
+    switch (type) {
+        case "Fargment":
+            processFargment(vnode, container);
+            break;
+        default:
+            if (shapeFlag & 1 /* ELEMENT */) {
+                processElement(vnode, container);
+            }
+            // 若type类型是object 则说明vnode是组件类型 调用processComponent处理组件
+            else if (shapeFlag & 2 /* STATEFUL_COMPONENT */) {
+                processComponent(vnode, container);
+            }
+            break;
     }
-    // 若type类型是object 则说明vnode是组件类型 调用processComponent处理组件
-    else if (shapeFlag & 2 /* STATEFUL_COMPONENT */) {
-        processComponent(vnode, container);
-    }
+}
+function processFargment(vnode, container) {
+    mountChildren(vnode, container);
 }
 function processElement(vnode, container) {
     mountElement(vnode, container);
@@ -334,7 +344,7 @@ function renderSlots(slots, name, props) {
             slot = slot(props);
         }
         // children is an array of slot objects
-        return createVNode('div', {}, slot);
+        return createVNode('Fargment', {}, slot);
     }
 }
 
