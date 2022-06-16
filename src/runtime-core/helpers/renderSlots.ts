@@ -1,4 +1,4 @@
-import { createVNode } from "../vnode";
+import { createVNode, Fargment } from "../vnode";
 
 export function renderSlots (slots, name, props) {
   let slot = slots[name];
@@ -8,6 +8,6 @@ export function renderSlots (slots, name, props) {
     }
 
     // children is an array of slot objects
-    return createVNode('Fargment', {}, slot)
+    return createVNode(Fargment, {}, slot)
   }
 }

@@ -2,6 +2,7 @@ import { isObject } from "../shared/index"
 import { ShapeFlags } from "../shared/ShapeFlags"
 import { createComponentInstance, setupComponent } from "./component"
 import { h } from "./h"
+import { Fargment } from "./vnode"
 
 // 将虚拟节点渲染到真实dom
 export function render(vnode, container) {
@@ -17,10 +18,9 @@ function path(vnode, container) {
    * 通过vnode.type判断是否是组件
    */
     switch (type) {
-      case "Fargment":
+      case Fargment:
         processFargment(vnode, container);
         break;
-    
       default:
         if(shapeFlag & ShapeFlags.ELEMENT) {
           processElement(vnode, container)

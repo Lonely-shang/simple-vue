@@ -217,6 +217,7 @@ function finishComponentSetup(instance) {
     // }
 }
 
+const Fargment = Symbol('fragment');
 function createVNode(type, props, children) {
     const vnode = {
         type,
@@ -259,7 +260,7 @@ function path(vnode, container) {
      * 通过vnode.type判断是否是组件
      */
     switch (type) {
-        case "Fargment":
+        case Fargment:
             processFargment(vnode, container);
             break;
         default:
@@ -348,7 +349,7 @@ function renderSlots(slots, name, props) {
             slot = slot(props);
         }
         // children is an array of slot objects
-        return createVNode('Fargment', {}, slot);
+        return createVNode(Fargment, {}, slot);
     }
 }
 
