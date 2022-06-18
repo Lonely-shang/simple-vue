@@ -1,4 +1,5 @@
 import { Foo } from './Foo.js'
+import { renderText } from '../../dist/simple-vue.cjs.js';
 
 export const  App = {
   name: 'App',
@@ -8,7 +9,7 @@ export const  App = {
       Foo,
       {},
       {
-        header: (slot) =>  h('div', {}, 'Header' + slot.age),
+        header: (slot) =>  h('div', {}, [h('p', {}, 'Header' + slot.age), renderText('11111')]),
         footer: () =>  h('div', {}, 'Footer'),
       }
     )

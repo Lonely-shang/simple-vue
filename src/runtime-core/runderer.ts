@@ -2,7 +2,7 @@ import { isObject } from "../shared/index"
 import { ShapeFlags } from "../shared/ShapeFlags"
 import { createComponentInstance, setupComponent } from "./component"
 import { h } from "./h"
-import { Fargment } from "./vnode"
+import { Fargment, Text } from "./vnode"
 
 // 将虚拟节点渲染到真实dom
 export function render(vnode, container) {
@@ -21,6 +21,9 @@ function path(vnode, container) {
       case Fargment:
         processFargment(vnode, container);
         break;
+      case Text:
+        processText(vnode, container);
+        break;
       default:
         if(shapeFlag & ShapeFlags.ELEMENT) {
           processElement(vnode, container)
@@ -35,6 +38,14 @@ function path(vnode, container) {
 
 function processFargment(vnode: any, container: any) {
   mountChildren(vnode, container)
+}
+
+function processText(vnode: any, container: any) {
+  const { children } = vnode
+
+  const el = document.createTextNode(children)
+
+  container.appendChild(el)
 }
 
 

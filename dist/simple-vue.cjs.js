@@ -214,6 +214,7 @@ function finishComponentSetup(instance) {
 }
 
 const Fargment = Symbol('fragment');
+const Text = Symbol('text');
 function createVNode(type, props, children) {
     const vnode = {
         type,
@@ -259,6 +260,9 @@ function path(vnode, container) {
         case Fargment:
             processFargment(vnode, container);
             break;
+        case Text:
+            processText(vnode, container);
+            break;
         default:
             if (shapeFlag & 1 /* ELEMENT */) {
                 processElement(vnode, container);
@@ -272,6 +276,11 @@ function path(vnode, container) {
 }
 function processFargment(vnode, container) {
     mountChildren(vnode, container);
+}
+function processText(vnode, container) {
+    const { children } = vnode;
+    const el = document.createTextNode(children);
+    container.appendChild(el);
 }
 function processElement(vnode, container) {
     mountElement(vnode, container);
@@ -349,5 +358,9 @@ function renderSlots(slots, name, props) {
     }
 }
 
-export { createApp, h, renderSlots };
+function renderText(str) {
+    return createVNode(Text, {}, str);
+}
+
+export { createApp, h, renderSlots, renderText };
 //# sourceMappingURL=simple-vue.cjs.js.map
