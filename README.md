@@ -28,7 +28,7 @@
 - [x] 初始化 props
 - [x] setup 可获取 props 和 context
 - [x] 支持 component emit
-- [ ] 支持 proxy
+- [x] 支持 proxy
 - [x] 可以在 render 函数中获取 setup 返回的对象
 - [ ] nextTick 的实现
 - [ ] 支持 getCurrentInstance
