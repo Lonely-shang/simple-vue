@@ -195,12 +195,12 @@ function setupStatefulComponent(instance) {
     // 设置代理对象
     instance.proxy = new Proxy({ _: instance }, PublicInstanceProxyHandlers);
     if (setup) {
-        currentInstance = instance;
+        setCurrentInstance(instance);
         const setupResult = setup(shallowReadonly(instance.props), {
             emit: instance.emit
         });
         handlerSetupResult(instance, setupResult);
-        // currentInstance = null
+        setCurrentInstance(null);
     }
 }
 function handlerSetupResult(instance, setupResult) {
@@ -219,6 +219,9 @@ function finishComponentSetup(instance) {
     // }
 }
 let currentInstance = null;
+function setCurrentInstance(instance) {
+    currentInstance = instance;
+}
 function getCurrentInstance() {
     return currentInstance;
 }
