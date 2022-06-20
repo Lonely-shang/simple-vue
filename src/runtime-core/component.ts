@@ -1,5 +1,4 @@
 import { shallowReadonly } from "../reactivity/reactive"
-import { isObject } from "../shared/index"
 import { emit } from "./componentEmit"
 import { initProps } from "./componentProps"
 import { PublicInstanceProxyHandlers } from "./componentPublicInstance"
@@ -39,10 +38,12 @@ function setupStatefulComponent(instance: any) {
   instance.proxy = new Proxy({ _ : instance}, PublicInstanceProxyHandlers)
 
   if(setup) {
+    currentInstance = instance
     const setupResult = setup(shallowReadonly(instance.props), {
       emit: instance.emit
     })
     handlerSetupResult(instance, setupResult)
+    // currentInstance = null
   }
 }
 
@@ -66,4 +67,13 @@ function finishComponentSetup(instance: any) {
     instance.render = Component.render
   // }
 }
+
+let currentInstance = null
+
+export function getCurrentInstance() {
+  return currentInstance
+}
+
+
+
 

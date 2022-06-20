@@ -1,5 +1,5 @@
 import { Foo } from './Foo.js'
-import { renderText } from '../../dist/simple-vue.cjs.js';
+import { renderText, getCurrentInstance } from '../../dist/simple-vue.cjs.js';
 
 export const  App = {
   name: 'App',
@@ -26,6 +26,8 @@ export const  App = {
   },
 
   setup() {
+    const instance = getCurrentInstance()
+    console.log(instance);
     return {
       msg: 'world!'
     }

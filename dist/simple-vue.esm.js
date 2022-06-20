@@ -195,10 +195,12 @@ function setupStatefulComponent(instance) {
     // 设置代理对象
     instance.proxy = new Proxy({ _: instance }, PublicInstanceProxyHandlers);
     if (setup) {
+        currentInstance = instance;
         const setupResult = setup(shallowReadonly(instance.props), {
             emit: instance.emit
         });
         handlerSetupResult(instance, setupResult);
+        // currentInstance = null
     }
 }
 function handlerSetupResult(instance, setupResult) {
@@ -215,6 +217,10 @@ function finishComponentSetup(instance) {
     // if(Component.render) {
     instance.render = Component.render;
     // }
+}
+let currentInstance = null;
+function getCurrentInstance() {
+    return currentInstance;
 }
 
 const Fargment = Symbol('fragment');
@@ -367,6 +373,7 @@ function renderText(str) {
 }
 
 exports.createApp = createApp;
+exports.getCurrentInstance = getCurrentInstance;
 exports.h = h;
 exports.renderSlots = renderSlots;
 exports.renderText = renderText;

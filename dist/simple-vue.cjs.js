@@ -191,10 +191,12 @@ function setupStatefulComponent(instance) {
     // 设置代理对象
     instance.proxy = new Proxy({ _: instance }, PublicInstanceProxyHandlers);
     if (setup) {
+        currentInstance = instance;
         const setupResult = setup(shallowReadonly(instance.props), {
             emit: instance.emit
         });
         handlerSetupResult(instance, setupResult);
+        // currentInstance = null
     }
 }
 function handlerSetupResult(instance, setupResult) {
@@ -211,6 +213,10 @@ function finishComponentSetup(instance) {
     // if(Component.render) {
     instance.render = Component.render;
     // }
+}
+let currentInstance = null;
+function getCurrentInstance() {
+    return currentInstance;
 }
 
 const Fargment = Symbol('fragment');
@@ -362,5 +368,5 @@ function renderText(str) {
     return createVNode(Text, {}, str);
 }
 
-export { createApp, h, renderSlots, renderText };
+export { createApp, getCurrentInstance, h, renderSlots, renderText };
 //# sourceMappingURL=simple-vue.cjs.js.map
