@@ -12,7 +12,7 @@ export function createComponentInstance(vnode: any, parent: any) {
     props: {},
     slots: {},
     parent,
-    provides: {},
+    provides: parent ? parent.provides : {},
     emit: () => {},
   }
 

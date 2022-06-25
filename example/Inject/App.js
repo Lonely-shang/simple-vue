@@ -13,6 +13,23 @@ export const  App = {
 
       [
         h('div', {}, 'Provide'),
+        h(provideTwo)
+      ]
+    )
+  }
+}
+
+const provideTwo = {
+  name: 'provideTwo',
+  setup() {
+  },
+  render(h) {
+    return h(
+      'div',
+      {},
+
+      [
+        h('div', {}, 'provideTwo'),
         h(Cusumer)
       ]
     )

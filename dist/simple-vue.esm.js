@@ -177,7 +177,7 @@ function createComponentInstance(vnode, parent) {
         props: {},
         slots: {},
         parent,
-        provides: {},
+        provides: parent ? parent.provides : {},
         emit: () => { },
     };
     component.emit = emit.bind(null, component);
