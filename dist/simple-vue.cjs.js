@@ -165,13 +165,15 @@ function normalizeSlotsValue(value) {
     return Array.isArray(value) ? value : [value];
 }
 
-function createComponentInstance(vnode) {
+function createComponentInstance(vnode, parent) {
     const component = {
         vnode,
         type: vnode.type,
         setupState: {},
         props: {},
         slots: {},
+        parent,
+        provides: parent ? parent.provides : {},
         emit: () => { },
     };
     component.emit = emit.bind(null, component);
@@ -255,11 +257,11 @@ function h(type, props, children) {
 }
 
 // 将虚拟节点渲染到真实dom
-function render(vnode, container) {
+function render(vnode, container, parentComponent) {
     // patch
-    path(vnode, container);
+    path(vnode, container, parentComponent);
 }
-function path(vnode, container) {
+function path(vnode, container, parentComponent) {
     const { type, shapeFlag } = vnode;
     // 处理组件
     /**
@@ -267,34 +269,34 @@ function path(vnode, container) {
      */
     switch (type) {
         case Fargment:
-            processFargment(vnode, container);
+            processFargment(vnode, container, parentComponent);
             break;
         case Text:
             processText(vnode, container);
             break;
         default:
             if (shapeFlag & 1 /* ELEMENT */) {
-                processElement(vnode, container);
+                processElement(vnode, container, parentComponent);
             }
             // 若type类型是object 则说明vnode是组件类型 调用processComponent处理组件
             else if (shapeFlag & 2 /* STATEFUL_COMPONENT */) {
-                processComponent(vnode, container);
+                processComponent(vnode, container, parentComponent);
             }
             break;
     }
 }
-function processFargment(vnode, container) {
-    mountChildren(vnode, container);
+function processFargment(vnode, container, parentComponent) {
+    mountChildren(vnode, container, parentComponent);
 }
 function processText(vnode, container) {
     const { children } = vnode;
     const el = document.createTextNode(children);
     container.appendChild(el);
 }
-function processElement(vnode, container) {
-    mountElement(vnode, container);
+function processElement(vnode, container, parentComponent) {
+    mountElement(vnode, container, parentComponent);
 }
-function mountElement(vnode, container) {
+function mountElement(vnode, container, parentComponent) {
     const { type, props, children, shapeFlag } = vnode;
     const el = document.createElement(type);
     vnode.el = el;
@@ -302,7 +304,7 @@ function mountElement(vnode, container) {
         el.textContent = children;
     }
     else if (shapeFlag & 8 /* ARRAY_CHILDREN */) {
-        mountChildren(vnode, el);
+        mountChildren(vnode, el, parentComponent);
     }
     for (const key in props) {
         const _key = props[key];
@@ -317,15 +319,15 @@ function mountElement(vnode, container) {
     }
     container.appendChild(el);
 }
-function mountChildren(vnode, container) {
-    vnode.children.map(v => path(v, container));
+function mountChildren(vnode, container, parentComponent) {
+    vnode.children.map(v => path(v, container, parentComponent));
 }
-function processComponent(vnode, container) {
+function processComponent(vnode, container, parentComponent) {
     // 挂载组件
-    mountComponent(vnode, container);
+    mountComponent(vnode, container, parentComponent);
 }
-function mountComponent(initialVnode, container) {
-    const instance = createComponentInstance(initialVnode);
+function mountComponent(initialVnode, container, parentComponent) {
+    const instance = createComponentInstance(initialVnode, parentComponent);
     setupComponent(instance);
     setupRenderEffect(instance, initialVnode, container);
 }
@@ -337,7 +339,7 @@ function setupRenderEffect(instance, initialVnode, container) {
     // 可能是templete
     // vnode -> path
     // vnode -> element -> mountElement
-    path(subTree, container);
+    path(subTree, container, instance);
     initialVnode.el = subTree.el;
 }
 
@@ -371,5 +373,19 @@ function renderText(str) {
     return createVNode(Text, {}, str);
 }
 
-export { createApp, getCurrentInstance, h, renderSlots, renderText };
+function provide(key, value) {
+    //
+    const instance = getCurrentInstance();
+    if (instance) {
+        instance.provides[key] = value;
+    }
+}
+function inject(key) {
+    const instance = getCurrentInstance();
+    if (instance) {
+        return instance.parent.provides[key];
+    }
+}
+
+export { createApp, getCurrentInstance, h, inject, provide, renderSlots, renderText };
 //# sourceMappingURL=simple-vue.cjs.js.map
