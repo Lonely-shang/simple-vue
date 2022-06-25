@@ -1,3 +1,4 @@
+import { provide, inject } from  '../../dist/simple-vue.cjs.js';
 
 export const  App = {
   name: 'App',
@@ -9,6 +10,7 @@ export const  App = {
     return h(
       'div',
       {},
+
       [
         h('div', {}, 'Provide'),
         h(Cusumer)
