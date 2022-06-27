@@ -257,7 +257,7 @@ function h(type, props, children) {
 }
 
 // 将虚拟节点渲染到真实dom
-function render(vnode, container, parentComponent) {
+function render(vnode, container, parentComponent = {}) {
     // patch
     path(vnode, container, parentComponent);
 }
@@ -377,7 +377,12 @@ function provide(key, value) {
     //
     const instance = getCurrentInstance();
     if (instance) {
-        instance.provides[key] = value;
+        let { provides } = instance;
+        const parentProvides = instance.parent.provides;
+        if (provides == parentProvides) {
+            provides = instance.provides = Object.create(parentProvides);
+        }
+        provides[key] = value;
     }
 }
 function inject(key) {

@@ -22,6 +22,11 @@ export const  App = {
 const provideTwo = {
   name: 'provideTwo',
   setup() {
+    provide('foo', 'provideTwo')
+    const foo = inject('foo')
+    return {
+      foo
+    }
   },
   render(h) {
     return h(
@@ -29,7 +34,7 @@ const provideTwo = {
       {},
 
       [
-        h('div', {}, 'provideTwo'),
+        h('div', {}, 'provideTwo' + this.foo),
         h(Cusumer)
       ]
     )

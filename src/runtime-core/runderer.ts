@@ -5,9 +5,8 @@ import { h } from "./h"
 import { Fargment, Text } from "./vnode"
 
 // 将虚拟节点渲染到真实dom
-export function render(vnode, container, parentComponent) {
+export function render (vnode, container, parentComponent = {}) {
   // patch
-
   path(vnode, container, parentComponent)
 }
 
