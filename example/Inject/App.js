@@ -34,7 +34,7 @@ const provideTwo = {
       {},
 
       [
-        h('div', {}, 'provideTwo' + this.foo),
+        h('div', {}, 'provideTwo - ' + this.foo),
         h(Cusumer)
       ]
     )

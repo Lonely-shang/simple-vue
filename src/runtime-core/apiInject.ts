@@ -9,7 +9,7 @@ export function provide (key: string, value: any) {
     const parentProvides = instance.parent.provides
 
     if (provides == parentProvides) {
-      provides = instance.provides = Object.create(parentProvides)
+      provides = instance.provides = Object.create(parentProvides || {})
     }
 
     provides[key] = value;

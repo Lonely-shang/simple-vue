@@ -170,6 +170,7 @@ function normalizeSlotsValue(value) {
 }
 
 function createComponentInstance(vnode, parent) {
+    console.log(parent);
     const component = {
         vnode,
         type: vnode.type,
@@ -384,7 +385,7 @@ function provide(key, value) {
         let { provides } = instance;
         const parentProvides = instance.parent.provides;
         if (provides == parentProvides) {
-            provides = instance.provides = Object.create(parentProvides);
+            provides = instance.provides = Object.create(parentProvides || {});
         }
         provides[key] = value;
     }
