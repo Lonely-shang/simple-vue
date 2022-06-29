@@ -386,10 +386,16 @@ function provide(key, value) {
         provides[key] = value;
     }
 }
-function inject(key) {
+function inject(key, defaultValue) {
     const instance = getCurrentInstance();
     if (instance) {
-        return instance.parent.provides[key];
+        const parentProvides = instance.parent.provides;
+        if (key in parentProvides) {
+            return parentProvides[key];
+        }
+        else if (defaultValue) {
+            return defaultValue;
+        }
     }
 }
 

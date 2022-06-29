@@ -45,13 +45,15 @@ const Cusumer = {
   name: 'Inject',
   setup() {
     const foo = inject('foo');
-    const bar = inject('bar');
+    // const bar = inject('bar');
+    const no = inject('no', 'defaultValue');
     return {
       foo,
-      bar
+      // bar,
+      no
     }
   },
   render(h) {
-    return h('div', {}, `Cusumer - ${this.foo} - ${this.bar}`)
+    return h('div', {}, `Cusumer - ${this.foo} - ${this.no}`)
   }
 }

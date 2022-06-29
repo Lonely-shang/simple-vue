@@ -16,12 +16,18 @@ export function provide (key: string, value: any) {
   }
 }
 
-export function inject (key: string) {
+export function inject (key: string, defaultValue: any) {
 
   const instance: any = getCurrentInstance()
 
   if (instance) {
-    return instance.parent.provides[key]
+    const parentProvides = instance.parent.provides
+
+    if (key in parentProvides) {
+      return parentProvides[key]
+    }else if (defaultValue) {
+      return defaultValue
+    }
   }
 
 }
