@@ -46,7 +46,8 @@ const Cusumer = {
   setup() {
     const foo = inject('foo');
     // const bar = inject('bar');
-    const no = inject('no', 'defaultValue');
+    // const no = inject('no', 'defaultValue');
+    const no = inject('no', () => 'defaultValue');
     return {
       foo,
       // bar,

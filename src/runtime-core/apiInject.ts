@@ -26,6 +26,9 @@ export function inject (key: string, defaultValue: any) {
     if (key in parentProvides) {
       return parentProvides[key]
     }else if (defaultValue) {
+      if (typeof defaultValue === 'function') {
+        return defaultValue()
+      }
       return defaultValue
     }
   }

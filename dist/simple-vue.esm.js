@@ -398,6 +398,9 @@ function inject(key, defaultValue) {
             return parentProvides[key];
         }
         else if (defaultValue) {
+            if (typeof defaultValue === 'function') {
+                return defaultValue();
+            }
             return defaultValue;
         }
     }
