@@ -53,6 +53,8 @@ function processElement(vnode: any, container: any, parentComponent: any) {
 }
 
 function mountElement(vnode: any, container: any, parentComponent: any) {
+  // canvas
+
   const { type, props, children, shapeFlag } = vnode
 
   const el = document.createElement(type);

@@ -302,6 +302,7 @@ function processElement(vnode, container, parentComponent) {
     mountElement(vnode, container, parentComponent);
 }
 function mountElement(vnode, container, parentComponent) {
+    // canvas
     const { type, props, children, shapeFlag } = vnode;
     const el = document.createElement(type);
     vnode.el = el;
