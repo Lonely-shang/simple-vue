@@ -4,116 +4,127 @@ import { createComponentInstance, setupComponent } from "./component"
 import { h } from "./h"
 import { Fargment, Text } from "./vnode"
 
-// 将虚拟节点渲染到真实dom
-export function render (vnode, container, parentComponent = {}) {
-  // patch
-  path(vnode, container, parentComponent)
-}
+export function createRenderer ( options: any ) {
 
-function path(vnode, container, parentComponent) {
-  const { type, shapeFlag } = vnode
-  // 处理组件
-  /**
-   * 通过vnode.type判断是否是组件
-   */
-    switch (type) {
-      case Fargment:
-        processFargment(vnode, container, parentComponent);
-        break;
-      case Text:
-        processText(vnode, container);
-        break;
-      default:
-        if(shapeFlag & ShapeFlags.ELEMENT) {
-          processElement(vnode, container, parentComponent)
-        }
-        // 若type类型是object 则说明vnode是组件类型 调用processComponent处理组件
-        else if(shapeFlag & ShapeFlags.STATEFUL_COMPONENT) {
-          processComponent(vnode, container, parentComponent)
-        }
-        break;
-    }
-}
+  const {
+    createElement,
+    pathProps,
+    insert
+  } = options
 
-function processFargment(vnode: any, container: any, parentComponent: any) {
-  mountChildren(vnode, container, parentComponent)
-}
-
-function processText(vnode: any, container: any) {
-  const { children } = vnode
-
-  const el = document.createTextNode(children)
-
-  container.appendChild(el)
-}
-
-
-function processElement(vnode: any, container: any, parentComponent: any) {
-  mountElement(vnode, container, parentComponent)
-}
-
-function mountElement(vnode: any, container: any, parentComponent: any) {
-  // canvas
-
-  const { type, props, children, shapeFlag } = vnode
-
-  const el = document.createElement(type);
-
-  vnode.el = el;
-
-  if(shapeFlag & ShapeFlags.TEXT_CHILDREN) {
-    el.textContent = children
-  }
-  else if(shapeFlag & ShapeFlags.ARRAY_CHILDREN) {
-    mountChildren(vnode, el, parentComponent)
+  // 将虚拟节点渲染到真实dom
+  function render (vnode, container, parentComponent = {}) {
+    // patch
+    path(vnode, container, parentComponent)
   }
 
-  for (const key in props) {
-    const _key = props[key]
-    const isOn = (key: string) => /^on[A-Z]/.test(key)
-    if (isOn(key)) {
-      const event = key.slice(2).toLowerCase()
-      el.addEventListener(event, _key)
-    }
-    else {
-      el.setAttribute(key, _key)
-    }
+  function path(vnode, container, parentComponent) {
+    const { type, shapeFlag } = vnode
+    // 处理组件
+    /**
+     * 通过vnode.type判断是否是组件
+     */
+      switch (type) {
+        case Fargment:
+          processFargment(vnode, container, parentComponent);
+          break;
+        case Text:
+          processText(vnode, container);
+          break;
+        default:
+          if(shapeFlag & ShapeFlags.ELEMENT) {
+            processElement(vnode, container, parentComponent)
+          }
+          // 若type类型是object 则说明vnode是组件类型 调用processComponent处理组件
+          else if(shapeFlag & ShapeFlags.STATEFUL_COMPONENT) {
+            processComponent(vnode, container, parentComponent)
+          }
+          break;
+      }
   }
 
-  container.appendChild(el)
+  function processFargment(vnode: any, container: any, parentComponent: any) {
+    mountChildren(vnode, container, parentComponent)
+  }
 
-}
+  function processText(vnode: any, container: any) {
+    const { children } = vnode
 
-function mountChildren(vnode, container, parentComponent) {
-  vnode.children.map(v => path(v, container, parentComponent))
-}
+    const el = document.createTextNode(children)
 
-function processComponent(vnode: any, container: any, parentComponent: any) {
-  // 挂载组件
-  mountComponent(vnode, container, parentComponent)
-}
+    container.appendChild(el)
+  }
 
-function mountComponent(initialVnode: any, container: any, parentComponent: any) {
-  const instance = createComponentInstance(initialVnode, parentComponent)
 
-  setupComponent(instance)
+  function processElement(vnode: any, container: any, parentComponent: any) {
+    mountElement(vnode, container, parentComponent)
+  }
 
-  setupRenderEffect(instance, initialVnode, container)
-}
+  function mountElement(vnode: any, container: any, parentComponent: any) {
+    // canvas
 
-function setupRenderEffect(instance: any, initialVnode: any, container: any) {
+    const { type, props, children, shapeFlag } = vnode
 
-  const { proxy } = instance
+    const el = createElement(type)
 
-  // render函数
-  const subTree = instance.render.bind(proxy)(h)
+    vnode.el = el;
 
-  // TODO
-  // 可能是templete
+    if(shapeFlag & ShapeFlags.TEXT_CHILDREN) {
+      el.textContent = children
+    }
+    else if(shapeFlag & ShapeFlags.ARRAY_CHILDREN) {
+      mountChildren(vnode, el, parentComponent)
+    }
 
-  // vnode -> path
-  // vnode -> element -> mountElement
-  path(subTree, container, instance)
+    for (const key in props) {
+      const _key = props[key]
+      // const isOn = (key: string) => /^on[A-Z]/.test(key)
+      // if (isOn(key)) {
+      //   const event = key.slice(2).toLowerCase()
+      //   el.addEventListener(event, _key)
+      // }
+      // else {
+      //   el.setAttribute(key, _key)
+      // }
+      pathProps(el, key, _key)
+    }
 
-  initialVnode.el = subTree.el
+    insert(el, container)
+    // container.appendChild(el)
+
+  }
+
+  function mountChildren(vnode, container, parentComponent) {
+    vnode.children.map(v => path(v, container, parentComponent))
+  }
+
+  function processComponent(vnode: any, container: any, parentComponent: any) {
+    // 挂载组件
+    mountComponent(vnode, container, parentComponent)
+  }
+
+  function mountComponent(initialVnode: any, container: any, parentComponent: any) {
+    const instance = createComponentInstance(initialVnode, parentComponent)
+
+    setupComponent(instance)
+
+    setupRenderEffect(instance, initialVnode, container)
+  }
+
+  function setupRenderEffect(instance: any, initialVnode: any, container: any) {
+
+    const { proxy } = instance
+
+    // render函数
+    const subTree = instance.render.bind(proxy)(h)
+
+    // TODO
+    // 可能是templete
+
+    // vnode -> path
+    // vnode -> element -> mountElement
+    path(subTree, container, instance)
+
+    initialVnode.el = subTree.el
+  }
 }
