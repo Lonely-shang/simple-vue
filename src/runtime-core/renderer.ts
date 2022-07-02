@@ -1,6 +1,7 @@
 import { isObject } from "../shared/index"
 import { ShapeFlags } from "../shared/ShapeFlags"
 import { createComponentInstance, setupComponent } from "./component"
+import { createAppApi } from "./createApp"
 import { h } from "./h"
 import { Fargment, Text } from "./vnode"
 
@@ -77,7 +78,7 @@ export function createRenderer ( options: any ) {
     }
 
     for (const key in props) {
-      const _key = props[key]
+      const val = props[key]
       // const isOn = (key: string) => /^on[A-Z]/.test(key)
       // if (isOn(key)) {
       //   const event = key.slice(2).toLowerCase()
@@ -86,7 +87,7 @@ export function createRenderer ( options: any ) {
       // else {
       //   el.setAttribute(key, _key)
       // }
-      pathProps(el, key, _key)
+      pathProps(el, key, val)
     }
 
     insert(el, container)
@@ -126,5 +127,9 @@ export function createRenderer ( options: any ) {
     path(subTree, container, instance)
 
     initialVnode.el = subTree.el
+  }
+
+  return {
+    createApp: createAppApi(render)
   }
 }
