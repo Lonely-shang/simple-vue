@@ -303,10 +303,16 @@ function inject(key, defaultValue) {
 function createAppApi(render) {
     return function createApp(rootComponent) {
         return {
-            mount(domId) {
-                const rootContainer = document.querySelector(domId);
+            mount(container) {
+                let rootContainer = null;
+                if (typeof container == 'string') {
+                    rootContainer = document.querySelector(container);
+                }
+                else {
+                    rootContainer = container;
+                }
                 if (!rootContainer) {
-                    throw new Error(`找不到指定的dom元素: ${domId}`);
+                    throw new Error(`找不到指定的dom元素: ${container}`);
                 }
                 // 先将根组件转化成虚拟节点
                 const vnode = createVNode(rootComponent);

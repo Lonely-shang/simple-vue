@@ -6,10 +6,14 @@ const game = new PIXI.Application({
   width: 800,
 });
 
+document.body.appendChild(game.view);
+
 const renderer = createRenderer({
   createElement() {},
   patchProps() {},
   insert() {}
 });
 
-// createApp(App).mount(game.view);
+console.log(game.stage);
+
+// createApp(App).mount(game.stage);
