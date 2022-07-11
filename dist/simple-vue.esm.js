@@ -53,6 +53,9 @@ const extend = Object.assign;
 function isObject(obj) {
     return obj instanceof Object && obj !== null;
 }
+function hasChanged(value, oldValue) {
+    return !Object.is(value, oldValue);
+}
 const hasOwn = (value, key) => Object.prototype.hasOwnProperty.call(value, key);
 const camelize = (str) => {
     return str.replace(/-(\w)/g, (all, letter) => {
@@ -448,12 +451,35 @@ function createApp(...args) {
     return renderer.createApp(...args);
 }
 
+class RefImpl {
+    constructor(val) {
+        this.__v_isRef = true;
+        this.dep = new Set();
+        this._rawValue = val;
+        this._value = isObject(val) ? reactive(val) : val;
+    }
+    get value() {
+        return this._value;
+    }
+    set value(value) {
+        if (hasChanged(this._rawValue, value)) {
+            this._rawValue = value;
+            this._value = value;
+            triggerEffect(this.dep);
+        }
+    }
+}
+function ref(val) {
+    return new RefImpl(val);
+}
+
 exports.createApp = createApp;
 exports.createRenderer = createRenderer;
 exports.getCurrentInstance = getCurrentInstance;
 exports.h = h;
 exports.inject = inject;
 exports.provide = provide;
+exports.ref = ref;
 exports.renderSlots = renderSlots;
 exports.renderText = renderText;
 //# sourceMappingURL=simple-vue.esm.js.map

@@ -1,3 +1,5 @@
+import { ref } from '../../dist/simple-vue.cjs.js';
+
 export const App = {
   setup () {
 
