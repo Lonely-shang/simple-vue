@@ -1,3 +1,4 @@
+import { proxyRefs } from "../reactivity"
 import { shallowReadonly } from "../reactivity/reactive"
 import { emit } from "./componentEmit"
 import { initProps } from "./componentProps"
@@ -54,7 +55,7 @@ function handlerSetupResult(instance: any, setupResult: any) {
   // 这里传过来的setupResult可能是个函数或对象
 
   if(typeof setupResult === 'object') {
-    instance.setupState = setupResult
+    instance.setupState = proxyRefs(setupResult)
   }
 
   // TODO

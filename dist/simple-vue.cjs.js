@@ -167,6 +167,47 @@ function createReactiveObject(raw, baseHandler) {
     return new Proxy(raw, baseHandler);
 }
 
+class RefImpl {
+    constructor(val) {
+        this.__v_isRef = true;
+        this.dep = new Set();
+        this._rawValue = val;
+        this._value = isObject(val) ? reactive(val) : val;
+    }
+    get value() {
+        return this._value;
+    }
+    set value(value) {
+        if (hasChanged(this._rawValue, value)) {
+            this._rawValue = value;
+            this._value = value;
+            triggerEffect(this.dep);
+        }
+    }
+}
+function ref(val) {
+    return new RefImpl(val);
+}
+function isRef(val) {
+    return !!val.__v_isRef;
+}
+function unRef(val) {
+    return isRef(val) ? val.value : val;
+}
+function proxyRefs(ref) {
+    return new Proxy(ref, {
+        get(target, key) {
+            return unRef(Reflect.get(target, key));
+        },
+        set(target, key, value) {
+            if (isRef(target[key]) && !isRef(value)) {
+                return target[key].value = value;
+            }
+            return Reflect.set(target, key, value);
+        }
+    });
+}
+
 function emit(instance, event, ...args) {
     const { props } = instance;
     const handlerKey = toHandlerKey(camelize(event));
@@ -255,7 +296,7 @@ function setupStatefulComponent(instance) {
 function handlerSetupResult(instance, setupResult) {
     // 这里传过来的setupResult可能是个函数或对象
     if (typeof setupResult === 'object') {
-        instance.setupState = setupResult;
+        instance.setupState = proxyRefs(setupResult);
     }
     // TODO
     // 如果是函数，则当成render函数渲染
@@ -447,27 +488,5 @@ function createApp(...args) {
     return renderer.createApp(...args);
 }
 
-class RefImpl {
-    constructor(val) {
-        this.__v_isRef = true;
-        this.dep = new Set();
-        this._rawValue = val;
-        this._value = isObject(val) ? reactive(val) : val;
-    }
-    get value() {
-        return this._value;
-    }
-    set value(value) {
-        if (hasChanged(this._rawValue, value)) {
-            this._rawValue = value;
-            this._value = value;
-            triggerEffect(this.dep);
-        }
-    }
-}
-function ref(val) {
-    return new RefImpl(val);
-}
-
-export { createApp, createRenderer, getCurrentInstance, h, inject, provide, ref, renderSlots, renderText };
+export { createApp, createRenderer, getCurrentInstance, h, inject, provide, proxyRefs, ref, renderSlots, renderText };
 //# sourceMappingURL=simple-vue.cjs.js.map

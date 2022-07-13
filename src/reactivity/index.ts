@@ -1,1 +1,1 @@
-export { ref } from './ref'
+export { ref, proxyRefs } from './ref'
