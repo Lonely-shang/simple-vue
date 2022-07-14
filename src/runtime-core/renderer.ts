@@ -121,7 +121,7 @@ export function createRenderer ( options: any ) {
         const { proxy } = instance
 
         // render函数
-        const subTree = instance.render.bind(proxy)(h)
+        const subTree = (instance.subTree = instance.render.bind(proxy)(h))
 
         // TODO
         // 可能是templete
@@ -135,6 +135,20 @@ export function createRenderer ( options: any ) {
         instance.isMounted = !instance.isMounted
       }else {
         console.log('update');
+
+        const { proxy } = instance
+
+        // render函数
+        const subTree = instance.render.bind(proxy)(h)
+        const prevSubTree = instance.subTree;
+
+        instance.subTree = subTree;
+        console.log('currentSubTree', subTree);
+        console.log('prevSubTree', prevSubTree);
+
+
+        // path(subTree, container, instance)
+
       }
     })
   }
