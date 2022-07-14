@@ -1,4 +1,4 @@
-import { isObject } from "../shared/index"
+import { effect } from "../reactivity"
 import { ShapeFlags } from "../shared/ShapeFlags"
 import { createComponentInstance, setupComponent } from "./component"
 import { createAppApi } from "./createApp"
@@ -114,19 +114,29 @@ export function createRenderer ( options: any ) {
 
   function setupRenderEffect(instance: any, initialVnode: any, container: any) {
 
-    const { proxy } = instance
+    effect(() => {
+      if (!instance.isMounted) {
+        console.log('init');
 
-    // render函数
-    const subTree = instance.render.bind(proxy)(h)
+        const { proxy } = instance
 
-    // TODO
-    // 可能是templete
+        // render函数
+        const subTree = instance.render.bind(proxy)(h)
 
-    // vnode -> path
-    // vnode -> element -> mountElement
-    path(subTree, container, instance)
+        // TODO
+        // 可能是templete
 
-    initialVnode.el = subTree.el
+        // vnode -> path
+        // vnode -> element -> mountElement
+        path(subTree, container, instance)
+
+        initialVnode.el = subTree.el
+
+        instance.isMounted = !instance.isMounted
+      }else {
+        console.log('update');
+      }
+    })
   }
 
   return {

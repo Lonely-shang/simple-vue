@@ -65,7 +65,87 @@ const toHandlerKey = (key) => {
     return `on${capitalize(key)}`;
 };
 
+let shouldTrack = false;
+let effectFun;
+class EffectReactive {
+    constructor(fun, scheduler) {
+        this.scheduler = scheduler;
+        this.active = true;
+        this.deps = [];
+        this._fun = fun;
+    }
+    run() {
+        // 如果active为flase则不需要收集依赖， 直接执行_run方法
+        if (!this.active) {
+            return this._fun();
+        }
+        // 否则将shoudTrack置为true，则track方法执行时会收集依赖
+        shouldTrack = true;
+        effectFun = this;
+        // 执行_fun方法获取返回值，此时track已经执行并收集依赖完成
+        let res = this._fun();
+        // 将shouldTrack再次重置为false，以便下次执行时判断
+        shouldTrack = false;
+        return res;
+    }
+    stop() {
+        // 移除对应收集的依赖方法
+        if (this.deps.length) {
+            if (this.active) {
+                this.active = false;
+                deleteupEffect(this);
+                if (this.onStop) {
+                    this.onStop();
+                }
+            }
+        }
+    }
+}
+function deleteupEffect(effect) {
+    effect.deps.forEach(item => {
+        item.delete(effect);
+    });
+}
+function effect(fun, options = {}) {
+    const _effect = new EffectReactive(fun, options === null || options === void 0 ? void 0 : options.scheduler);
+    // 将options中的onStop方法赋值给EffectReactive
+    // _effect.onStop = options?.onStop
+    extend(_effect, options);
+    _effect.run();
+    const runner = _effect.run.bind(_effect);
+    // 将EffectReactive实例绑定到runner函数上，方便调用stop函数
+    runner.effect = _effect;
+    return runner;
+}
 const refectMap = new Map();
+// 收集依赖
+function track(target, key) {
+    // 当只触发get方法时，不调用effect函数时，未实例化EffectReactive，effectFun is undefined
+    // 当为undefined时直接返回
+    if (!isTracking())
+        return;
+    let depsMap = refectMap.get(target);
+    if (!depsMap) {
+        depsMap = new Map();
+        refectMap.set(target, depsMap);
+    }
+    let dep = depsMap.get(key);
+    if (!dep) {
+        dep = new Set();
+        depsMap.set(key, dep);
+    }
+    trackEffect(dep);
+}
+function trackEffect(dep) {
+    dep.add(effectFun);
+    // 反向收集保存一下dep
+    effectFun.deps.push(dep);
+}
+// 验证是否收集依赖
+// 如果有一个为false则停止收集依赖
+function isTracking() {
+    return shouldTrack && !!effectFun;
+}
 // 触发依赖
 function trigger(target, key, value) {
     const depsMap = refectMap === null || refectMap === void 0 ? void 0 : refectMap.get(target);
@@ -99,6 +179,10 @@ function createGetter(isReadonly = false, shallow = false) {
             return !isReadonly;
         }
         const res = Reflect.get(target, key);
+        // 如果是readonly则不进行依赖收集
+        if (!isReadonly) {
+            track(target, key);
+        }
         // 如果是shallow包装的类型 直接返回 
         if (shallow) {
             return res;
@@ -175,6 +259,10 @@ class RefImpl {
         this._value = isObject(val) ? reactive(val) : val;
     }
     get value() {
+        // 收集依赖
+        if (isTracking()) {
+            trackEffect(this.dep);
+        }
         return this._value;
     }
     set value(value) {
@@ -265,6 +353,7 @@ function createComponentInstance(vnode, parent) {
         props: {},
         slots: {},
         parent,
+        isMounted: false,
         provides: parent ? parent.provides : {},
         emit: () => { },
     };
@@ -448,15 +537,24 @@ function createRenderer(options) {
         setupRenderEffect(instance, initialVnode, container);
     }
     function setupRenderEffect(instance, initialVnode, container) {
-        const { proxy } = instance;
-        // render函数
-        const subTree = instance.render.bind(proxy)(h);
-        // TODO
-        // 可能是templete
-        // vnode -> path
-        // vnode -> element -> mountElement
-        path(subTree, container, instance);
-        initialVnode.el = subTree.el;
+        effect(() => {
+            if (!instance.isMounted) {
+                console.log('init');
+                const { proxy } = instance;
+                // render函数
+                const subTree = instance.render.bind(proxy)(h);
+                // TODO
+                // 可能是templete
+                // vnode -> path
+                // vnode -> element -> mountElement
+                path(subTree, container, instance);
+                initialVnode.el = subTree.el;
+                instance.isMounted = !instance.isMounted;
+            }
+            else {
+                console.log('update');
+            }
+        });
     }
     return {
         createApp: createAppApi(render)
@@ -488,5 +586,5 @@ function createApp(...args) {
     return renderer.createApp(...args);
 }
 
-export { createApp, createRenderer, getCurrentInstance, h, inject, provide, proxyRefs, ref, renderSlots, renderText };
+export { createApp, createRenderer, effect, getCurrentInstance, h, inject, provide, proxyRefs, ref, renderSlots, renderText };
 //# sourceMappingURL=simple-vue.cjs.js.map
