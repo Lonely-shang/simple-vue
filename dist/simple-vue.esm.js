@@ -357,6 +357,7 @@ function createComponentInstance(vnode, parent) {
         props: {},
         slots: {},
         parent,
+        subTree: {},
         isMounted: false,
         provides: parent ? parent.provides : {},
         emit: () => { },
@@ -465,7 +466,7 @@ function createRenderer(options) {
     // 将虚拟节点渲染到真实dom
     function render(vnode, container, parentComponent = {}) {
         // patch
-        path(vnode, container, parentComponent);
+        path(null, vnode, container, parentComponent);
     }
     function path(oldVnode, newVnode, container, parentComponent) {
         const { type, shapeFlag } = newVnode;
@@ -500,7 +501,19 @@ function createRenderer(options) {
         container.appendChild(el);
     }
     function processElement(oldVnode, newVnode, container, parentComponent) {
-        mountElement(newVnode, container, parentComponent);
+        if (!oldVnode) {
+            mountElement(newVnode, container, parentComponent);
+        }
+        else {
+            patchElement(oldVnode, newVnode, container);
+        }
+    }
+    function patchElement(oldVnode, newVnode, container) {
+        console.log('oldVnode', oldVnode);
+        console.log('newVnode', newVnode);
+        console.log('container', container);
+        // update props
+        // update Element
     }
     function mountElement(vnode, container, parentComponent) {
         // canvas
@@ -529,7 +542,7 @@ function createRenderer(options) {
         // container.appendChild(el)
     }
     function mountChildren(vnode, container, parentComponent) {
-        vnode.children.map(v => path(_, v, container, parentComponent));
+        vnode.children.map(v => path(null, v, container, parentComponent));
     }
     function processComponent(oldVnode, newVnode, container, parentComponent) {
         // 挂载组件

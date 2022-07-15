@@ -16,7 +16,7 @@ export function createRenderer ( options: any ) {
   // 将虚拟节点渲染到真实dom
   function render (vnode, container, parentComponent = {}) {
     // patch
-    path(vnode, container, parentComponent)
+    path(null, vnode, container, parentComponent)
   }
 
   function path(oldVnode, newVnode, container, parentComponent) {
@@ -57,8 +57,21 @@ export function createRenderer ( options: any ) {
   }
 
 
-  function processElement(oldVnode, newVnode: any, container: any, parentComponent: any) {
-    mountElement(newVnode, container, parentComponent)
+  function processElement(oldVnode: any, newVnode: any, container: any, parentComponent: any) {
+    if (!oldVnode) {
+      mountElement(newVnode, container, parentComponent)
+    }else {
+      patchElement(oldVnode, newVnode, container)
+    }
+  }
+
+  function patchElement(oldVnode: any, newVnode: any, container: any) {
+    console.log('oldVnode', oldVnode);
+    console.log('newVnode', newVnode);
+    console.log('container', container);
+
+    // update props
+    // update Element
   }
 
   function mountElement(vnode: any, container: any, parentComponent: any) {
@@ -96,7 +109,7 @@ export function createRenderer ( options: any ) {
   }
 
   function mountChildren(vnode, container, parentComponent) {
-    vnode.children.map(v => path(_, v, container, parentComponent))
+    vnode.children.map(v => path(null, v, container, parentComponent))
   }
 
   function processComponent(oldVnode, newVnode: any, container: any, parentComponent: any) {
