@@ -19,37 +19,37 @@ export function createRenderer ( options: any ) {
     path(vnode, container, parentComponent)
   }
 
-  function path(vnode, container, parentComponent) {
-    const { type, shapeFlag } = vnode
+  function path(oldVnode, newVnode, container, parentComponent) {
+    const { type, shapeFlag } = newVnode
     // 处理组件
     /**
      * 通过vnode.type判断是否是组件
      */
       switch (type) {
         case Fargment:
-          processFargment(vnode, container, parentComponent);
+          processFargment(oldVnode, newVnode, container, parentComponent);
           break;
         case Text:
-          processText(vnode, container);
+          processText(oldVnode, newVnode, container);
           break;
         default:
           if(shapeFlag & ShapeFlags.ELEMENT) {
-            processElement(vnode, container, parentComponent)
+            processElement(oldVnode, newVnode, container, parentComponent)
           }
           // 若type类型是object 则说明vnode是组件类型 调用processComponent处理组件
           else if(shapeFlag & ShapeFlags.STATEFUL_COMPONENT) {
-            processComponent(vnode, container, parentComponent)
+            processComponent(oldVnode, newVnode, container, parentComponent)
           }
           break;
       }
   }
 
-  function processFargment(vnode: any, container: any, parentComponent: any) {
-    mountChildren(vnode, container, parentComponent)
+  function processFargment(oldVnode, newVnode: any, container: any, parentComponent: any) {
+    mountChildren(newVnode, container, parentComponent)
   }
 
-  function processText(vnode: any, container: any) {
-    const { children } = vnode
+  function processText(oldVnode, newVnode: any, container: any) {
+    const { children } = newVnode
 
     const el = document.createTextNode(children)
 
@@ -57,8 +57,8 @@ export function createRenderer ( options: any ) {
   }
 
 
-  function processElement(vnode: any, container: any, parentComponent: any) {
-    mountElement(vnode, container, parentComponent)
+  function processElement(oldVnode, newVnode: any, container: any, parentComponent: any) {
+    mountElement(newVnode, container, parentComponent)
   }
 
   function mountElement(vnode: any, container: any, parentComponent: any) {
@@ -96,12 +96,12 @@ export function createRenderer ( options: any ) {
   }
 
   function mountChildren(vnode, container, parentComponent) {
-    vnode.children.map(v => path(v, container, parentComponent))
+    vnode.children.map(v => path(_, v, container, parentComponent))
   }
 
-  function processComponent(vnode: any, container: any, parentComponent: any) {
+  function processComponent(oldVnode, newVnode: any, container: any, parentComponent: any) {
     // 挂载组件
-    mountComponent(vnode, container, parentComponent)
+    mountComponent(newVnode, container, parentComponent)
   }
 
   function mountComponent(initialVnode: any, container: any, parentComponent: any) {
@@ -128,7 +128,7 @@ export function createRenderer ( options: any ) {
 
         // vnode -> path
         // vnode -> element -> mountElement
-        path(subTree, container, instance)
+        path(null, subTree, container, instance)
 
         initialVnode.el = subTree.el
 
@@ -147,7 +147,7 @@ export function createRenderer ( options: any ) {
         console.log('prevSubTree', prevSubTree);
 
 
-        // path(subTree, container, instance)
+        path(prevSubTree, subTree, container, instance)
 
       }
     })

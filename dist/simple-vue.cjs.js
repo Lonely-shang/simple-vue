@@ -463,40 +463,40 @@ function createRenderer(options) {
         // patch
         path(vnode, container, parentComponent);
     }
-    function path(vnode, container, parentComponent) {
-        const { type, shapeFlag } = vnode;
+    function path(oldVnode, newVnode, container, parentComponent) {
+        const { type, shapeFlag } = newVnode;
         // 处理组件
         /**
          * 通过vnode.type判断是否是组件
          */
         switch (type) {
             case Fargment:
-                processFargment(vnode, container, parentComponent);
+                processFargment(oldVnode, newVnode, container, parentComponent);
                 break;
             case Text:
-                processText(vnode, container);
+                processText(oldVnode, newVnode, container);
                 break;
             default:
                 if (shapeFlag & 1 /* ELEMENT */) {
-                    processElement(vnode, container, parentComponent);
+                    processElement(oldVnode, newVnode, container, parentComponent);
                 }
                 // 若type类型是object 则说明vnode是组件类型 调用processComponent处理组件
                 else if (shapeFlag & 2 /* STATEFUL_COMPONENT */) {
-                    processComponent(vnode, container, parentComponent);
+                    processComponent(oldVnode, newVnode, container, parentComponent);
                 }
                 break;
         }
     }
-    function processFargment(vnode, container, parentComponent) {
-        mountChildren(vnode, container, parentComponent);
+    function processFargment(oldVnode, newVnode, container, parentComponent) {
+        mountChildren(newVnode, container, parentComponent);
     }
-    function processText(vnode, container) {
-        const { children } = vnode;
+    function processText(oldVnode, newVnode, container) {
+        const { children } = newVnode;
         const el = document.createTextNode(children);
         container.appendChild(el);
     }
-    function processElement(vnode, container, parentComponent) {
-        mountElement(vnode, container, parentComponent);
+    function processElement(oldVnode, newVnode, container, parentComponent) {
+        mountElement(newVnode, container, parentComponent);
     }
     function mountElement(vnode, container, parentComponent) {
         // canvas
@@ -525,11 +525,11 @@ function createRenderer(options) {
         // container.appendChild(el)
     }
     function mountChildren(vnode, container, parentComponent) {
-        vnode.children.map(v => path(v, container, parentComponent));
+        vnode.children.map(v => path(_, v, container, parentComponent));
     }
-    function processComponent(vnode, container, parentComponent) {
+    function processComponent(oldVnode, newVnode, container, parentComponent) {
         // 挂载组件
-        mountComponent(vnode, container, parentComponent);
+        mountComponent(newVnode, container, parentComponent);
     }
     function mountComponent(initialVnode, container, parentComponent) {
         const instance = createComponentInstance(initialVnode, parentComponent);
@@ -547,7 +547,7 @@ function createRenderer(options) {
                 // 可能是templete
                 // vnode -> path
                 // vnode -> element -> mountElement
-                path(subTree, container, instance);
+                path(null, subTree, container, instance);
                 initialVnode.el = subTree.el;
                 instance.isMounted = !instance.isMounted;
             }
@@ -560,7 +560,7 @@ function createRenderer(options) {
                 instance.subTree = subTree;
                 console.log('currentSubTree', subTree);
                 console.log('prevSubTree', prevSubTree);
-                // path(subTree, container, instance)
+                path(prevSubTree, subTree, container, instance);
             }
         });
     }
