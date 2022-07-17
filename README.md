@@ -29,6 +29,7 @@
 - [x] setup 可获取 props 和 context
 - [x] 支持 component emit
 - [x] 支持 proxy
+- [ ] 支持 nextTick
 - [x] 可以在 render 函数中获取 setup 返回的对象
 - [x] 支持 getCurrentInstance
 - [x] 支持 provide/inject
