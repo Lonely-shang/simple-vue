@@ -71,7 +71,24 @@ export function createRenderer ( options: any ) {
     console.log('container', container);
 
     // update props
+    const oldProps = oldVnode.props || {}
+    const newProps = newVnode.props || {}
+
+    const el = (newVnode = oldVnode.el)
+
+    patchProps(el, oldProps, newProps)
     // update Element
+  }
+
+  function patchProps(el, oldProps: any, newProps: any) {
+    for (const key in newProps) {
+      const prevProp = oldProps[key]
+      const nextProp = newProps[key]
+
+      if (prevProp !== nextProp) {
+        hostPatchProp(el, key, prevProp, nextProp);
+      }
+    }
   }
 
   function mountElement(vnode: any, container: any, parentComponent: any) {

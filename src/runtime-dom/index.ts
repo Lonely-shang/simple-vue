@@ -4,14 +4,14 @@ function createElement (type: string) {
   return document.createElement(type)
 }
 
-function pathProps (el, key: string, value: string) {
+function pathProps (el, key: string, prevVal, nextVal: string) {
   const isOn = (key: string) => /^on[A-Z]/.test(key)
   if (isOn(key)) {
     const event = key.slice(2).toLowerCase()
-    el.addEventListener(event, value)
+    el.addEventListener(event, nextVal)
   }
   else {
-    el.setAttribute(key, value)
+    el.setAttribute(key, nextVal)
   }
 }
 
