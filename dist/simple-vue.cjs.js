@@ -509,7 +509,20 @@ function createRenderer(options) {
         console.log('newVnode', newVnode);
         console.log('container', container);
         // update props
+        const oldProps = oldVnode.props || {};
+        const newProps = newVnode.props || {};
+        const el = (newVnode = oldVnode.el);
+        patchProps(el, oldProps, newProps);
         // update Element
+    }
+    function patchProps(el, oldProps, newProps) {
+        for (const key in newProps) {
+            const prevProp = oldProps[key];
+            const nextProp = newProps[key];
+            if (prevProp !== nextProp) {
+                pathProps(el, key, prevProp, nextProp);
+            }
+        }
     }
     function mountElement(vnode, container, parentComponent) {
         // canvas
@@ -532,7 +545,7 @@ function createRenderer(options) {
             // else {
             //   el.setAttribute(key, _key)
             // }
-            pathProps(el, key, val);
+            pathProps(el, key, null, val);
         }
         insert(el, container);
         // container.appendChild(el)
@@ -585,14 +598,14 @@ function createRenderer(options) {
 function createElement(type) {
     return document.createElement(type);
 }
-function pathProps(el, key, value) {
+function pathProps(el, key, prevVal, nextVal) {
     const isOn = (key) => /^on[A-Z]/.test(key);
     if (isOn(key)) {
         const event = key.slice(2).toLowerCase();
-        el.addEventListener(event, value);
+        el.addEventListener(event, nextVal);
     }
     else {
-        el.setAttribute(key, value);
+        el.setAttribute(key, nextVal);
     }
 }
 function insert(el, container) {

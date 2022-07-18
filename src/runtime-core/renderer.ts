@@ -86,7 +86,7 @@ export function createRenderer ( options: any ) {
       const nextProp = newProps[key]
 
       if (prevProp !== nextProp) {
-        hostPatchProp(el, key, prevProp, nextProp);
+        pathProps(el, key, prevProp, nextProp);
       }
     }
   }
@@ -117,7 +117,7 @@ export function createRenderer ( options: any ) {
       // else {
       //   el.setAttribute(key, _key)
       // }
-      pathProps(el, key, val)
+      pathProps(el, key, null, val)
     }
 
     insert(el, container)
