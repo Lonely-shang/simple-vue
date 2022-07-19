@@ -81,12 +81,22 @@ export function createRenderer ( options: any ) {
   }
 
   function patchProps(el, oldProps: any, newProps: any) {
-    for (const key in newProps) {
-      const prevProp = oldProps[key]
-      const nextProp = newProps[key]
+    if (oldProps !== newProps) {
+      for (const key in newProps) {
+        const prevProp = oldProps[key]
+        const nextProp = newProps[key]
 
-      if (prevProp !== nextProp) {
-        pathProps(el, key, prevProp, nextProp);
+        if (prevProp !== nextProp) {
+          pathProps(el, key, prevProp, nextProp);
+        }
+      }
+
+      if (Object.keys(oldProps).length) {
+        for (const key in oldProps) {
+          if (!(key in newProps)) {
+            pathProps(el, key, oldProps[key], null);
+          }
+        }
       }
     }
   }
