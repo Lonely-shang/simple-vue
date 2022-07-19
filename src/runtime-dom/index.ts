@@ -11,7 +11,11 @@ function pathProps (el, key: string, prevVal, nextVal: string) {
     el.addEventListener(event, nextVal)
   }
   else {
-    el.setAttribute(key, nextVal)
+    if (nextVal == undefined || nextVal == null) {
+      el.removeAttribute(key)
+    } else {
+      el.setAttribute(key, nextVal)
+    }
   }
 }
 

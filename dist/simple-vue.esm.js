@@ -515,7 +515,7 @@ function createRenderer(options) {
         // update props
         const oldProps = oldVnode.props || {};
         const newProps = newVnode.props || {};
-        const el = (newVnode = oldVnode.el);
+        const el = (newVnode.el = oldVnode.el);
         patchProps(el, oldProps, newProps);
         // update Element
     }
@@ -609,7 +609,12 @@ function pathProps(el, key, prevVal, nextVal) {
         el.addEventListener(event, nextVal);
     }
     else {
-        el.setAttribute(key, nextVal);
+        if (nextVal == undefined || nextVal == null) {
+            el.removeAttribute(key);
+        }
+        else {
+            el.setAttribute(key, nextVal);
+        }
     }
 }
 function insert(el, container) {

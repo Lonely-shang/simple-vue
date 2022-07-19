@@ -74,7 +74,7 @@ export function createRenderer ( options: any ) {
     const oldProps = oldVnode.props || {}
     const newProps = newVnode.props || {}
 
-    const el = (newVnode = oldVnode.el)
+    const el = (newVnode.el = oldVnode.el)
 
     patchProps(el, oldProps, newProps)
     // update Element
