@@ -46,6 +46,7 @@ function renderText(str) {
 }
 
 const extend = Object.assign;
+const EMIT_OBJ = {};
 function isObject(obj) {
     return obj instanceof Object && obj !== null;
 }
@@ -509,8 +510,8 @@ function createRenderer(options) {
         console.log('newVnode', newVnode);
         console.log('container', container);
         // update props
-        const oldProps = oldVnode.props || {};
-        const newProps = newVnode.props || {};
+        const oldProps = oldVnode.props || EMIT_OBJ;
+        const newProps = newVnode.props || EMIT_OBJ;
         const el = (newVnode.el = oldVnode.el);
         patchProps(el, oldProps, newProps);
         // update Element
@@ -524,7 +525,8 @@ function createRenderer(options) {
                     pathProps(el, key, prevProp, nextProp);
                 }
             }
-            if (Object.keys(oldProps).length) {
+            // Object.keys(oldProps).length
+            if (oldProps !== EMIT_OBJ) {
                 for (const key in oldProps) {
                     if (!(key in newProps)) {
                         pathProps(el, key, oldProps[key], null);

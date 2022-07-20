@@ -1,5 +1,7 @@
 export const extend = Object.assign;
 
+export const EMIT_OBJ = {};
+
 export function isObject(obj: unknown){
   return obj instanceof Object && obj !== null
 }
