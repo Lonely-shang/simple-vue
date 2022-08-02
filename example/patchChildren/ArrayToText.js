@@ -1,7 +1,7 @@
-import { ref } from '../../dist/simple-vue.cjs.js';
+import { h, ref } from '../../dist/simple-vue.cjs.js';
 
 const nextChildren = "newChildren";
-
+const prevChildren = [h('div', {}, 'A'), h('div', {}, 'B')]
 export default {
   name: 'ArrayToText',
   setup () {
@@ -17,9 +17,6 @@ export default {
 
     return that.isChange === true
       ? h('div', {}, nextChildren)
-      : h('div', {}, [
-        h('div', {}, 'A'),
-        h('div', {}, 'B')
-      ])
+      : h('div', {}, prevChildren)
   }
 }
